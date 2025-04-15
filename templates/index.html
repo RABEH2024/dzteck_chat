@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DzTeck - محادثة ذكية مع النماذج العالمية</title>
+    <meta name="description" content="DzTeck - واجهة محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter">
+    
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="chat-container">
+        <header class="chat-header">
+            <div class="logo">
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
+                <h1>DzTeck شات</h1>
+            </div>
+        </header>
+
+        {% if chats and chats|length > 0 %}
+        <!-- Chat List -->
+        <div class="chat-list">
+            {% for chat in chats %}
+            <a href="{{ url_for('view_chat', chat_id=chat.id) }}" class="chat-item">
+                <span class="chat-title">{{ chat.title }}</span>
+                <span class="chat-date">{{ chat.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
+            </a>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- New Chat Form -->
+        <form action="{{ url_for('create_chat') }}" method="post">
+            <div class="model-selector">
+                <label for="model-select">اختر النموذج:</label>
+                <select id="model-select" name="model">
+                    <!-- نماذج مجانية أكثر ذكاءً من OpenRouter -->
+                    <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (مجاني)</option>
+                    <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
+                    <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
+                    <option value="openchat/openchat-7b">OpenChat 7B (مجاني)</option>
+                    <option value="gryphe/mythomist-7b">MythoMist 7B (مجاني)</option>
+                    <option value="01-ai/yi-1.5-9b-chat">Yi 1.5 9B Chat (مجاني)</option>
+                    <!-- نماذج مدفوعة أكثر تقدماً -->
+                    <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
+                    <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                    <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
+                </select>
+            </div>
+            <button type="submit" class="new-chat-button">إنشاء محادثة جديدة</button>
+        </form>
+
+        <div class="info-banner">
+            <p class="info-text">أهلاً بك في DzTeck شات! يمكنك التحدث مع عدة نماذج ذكاء اصطناعي عبر واجهتنا العربية. اختر نموذجًا وابدأ محادثة جديدة.</p>
+        </div>
+
+        <footer class="chat-footer">
+            <p>DzTeck &copy; 2025 - محادثة ذكية اصطناعية متقدمة باللغة العربية</p>
+            <p class="footer-tagline">تواصل مع أفضل نماذج الذكاء الاصطناعي العالمية بسهولة وبلغتك</p>
+        </footer>
+    </div>
+
+    <!-- No scripts needed for index page -->
+</body>
+</html>
