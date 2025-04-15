@@ -1,0 +1,29 @@
+
+# Exported and corrected render.yaml
+services:
+- type: web
+  name: dzteck
+  runtime: python
+  repo: https://github.com/RABEH2024/dzteck_chat
+  plan: free
+  envVars:
+  - key: SESSION_SECRET
+    value: dzteck_default_secret_key_يجب_تغييره_في_الإنتاج
+  - key: PGDATABASE
+    value: dzteck_db
+  - key: PGPASSWORD
+    value: LRiad7yrWC0TIpcopbomiVXsTvLCz7mr
+  - key: PGUSER
+    value: dzteck
+  - key: PGPORT
+    value: "5432"
+  - key: PGHOST
+    value: dpg-cvuqt7idbo4c73f61bsg-a.oregon-postgres.render.com
+  - key: DATABASE_URL
+    value: postgresql://dzteck:LRiad7yrWC0TIpcopbomiVXsTvLCz7mr@dpg-cvuqt7idbo4c73f61bsg-a.oregon-postgres.render.com:5432/dzteck_db
+  - key: OPENAI_API_KEY
+    value: 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
+  region: oregon
+  buildCommand: pip install -r requirements.txt
+  startCommand: gunicorn app:app
+version: "1"
