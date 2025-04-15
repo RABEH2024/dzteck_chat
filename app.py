@@ -6,7 +6,6 @@ from flask import Flask, render_template, request, jsonify, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import DeclarativeBase
 
-# إعدادات اللوج
 logging.basicConfig(level=logging.DEBUG)
 
 class Base(DeclarativeBase): pass
@@ -15,7 +14,6 @@ db = SQLAlchemy(model_class=Base)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "dzteck_default_secret_key")
 
-# إعداد قاعدة البيانات
 database_url = os.environ.get("DATABASE_URL")
 if database_url:
     logging.debug(f"DATABASE_URL is set: {database_url[:10]}...")
@@ -25,7 +23,6 @@ else:
     logging.error("DATABASE_URL is not set!")
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///dzteck.db"
 
-# مفاتيح API
 OPENROUTER_API_KEY = os.environ.get("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
     logging.warning("OPENROUTER_API_KEY is not set!")
@@ -40,7 +37,6 @@ with app.app_context():
     from models import Chat, Message
     import chat_service
 
-# استدعاء OpenRouter API
 def call_openrouter_api(model, messages, temperature=0.7, max_tokens=1024):
     api_url = "https://openrouter.ai/api/v1/chat/completions"
     headers = {
@@ -62,9 +58,8 @@ def call_openrouter_api(model, messages, temperature=0.7, max_tokens=1024):
         return {"content": response.json()['choices'][0]['message']['content'].strip()}
     except Exception as e:
         logging.error(f"OpenRouter error: {e}")
-        return {"error": f"خطأ في الاتصال بـ OpenRouter: {str(e)}"}
+        return {"error": f"Ø®Ø·Ø£ ÙÙŠ Ø§Ù„Ø§ØªØµØ§Ù„ Ø¨Ù€ OpenRouter: {str(e)}"}
 
-# Telegram Webhook endpoint
 @app.route('/api/telegram', methods=['POST'])
 def telegram_webhook():
     data = request.json
@@ -75,22 +70,19 @@ def telegram_webhook():
     if not chat_id or not user_text:
         return "no content", 200
 
-    # بناء محادثة OpenRouter
     messages = [{"role": "user", "content": user_text}]
     ai_response = call_openrouter_api(
         model="mistralai/mistral-7b-instruct-v0.2",
         messages=messages
     )
 
-    reply_text = ai_response.get("content", "عذرًا، لم أتمكن من الفهم.")
+    reply_text = ai_response.get("content", "Ø¹Ø°Ø±Ù‹Ø§ØŒ Ù„Ù… Ø£ØªÙ…ÙƒÙ† Ù…Ù† Ø§Ù„ÙÙ‡Ù….")
 
-    # الرد عبر Telegram
     telegram_api = f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage"
     requests.post(telegram_api, json={"chat_id": chat_id, "text": reply_text})
 
     return "ok", 200
 
-# باقي الواجهات (نفس السابق)
 @app.route('/')
 def index():
     chats = chat_service.get_all_chats()
@@ -139,7 +131,7 @@ def add_message(chat_id):
             'created_at': assistant_message.created_at.isoformat()
         })
     else:
-        error_message = ai_response.get("error", "حدث خطأ غير معروف")
+        error_message = ai_response.get("error", "Ø­Ø¯Ø« Ø®Ø·Ø£ ØºÙŠØ± Ù…Ø¹Ø±ÙˆÙ")
         error_msg = chat_service.add_message_to_chat(chat_id, 'assistant', error_message)
         return jsonify({
             'id': error_msg.id,
