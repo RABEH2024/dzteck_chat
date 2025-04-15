@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>DzTeck Logo</title>
+    <g id="DzTeck-Logo" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Background" fill="#5B3A94" cx="20" cy="20" r="20"></circle>
+        <text id="DZ" font-family="Arial-BoldMT, Arial" font-size="18" font-weight="bold" fill="#FFFFFF">
+            <tspan x="8" y="26">DZ</tspan>
+        </text>
+        <path d="M31,14 L31,26 C31,27.1045695 30.1045695,28 29,28 L27,28 L27,12 L29,12 C30.1045695,12 31,12.8954305 31,14 Z" id="Tech-Side" fill="#FFFFFF"></path>
+        <circle id="Dot1" fill="#FFFFFF" cx="24" cy="15" r="1.5"></circle>
+        <circle id="Dot2" fill="#FFFFFF" cx="24" cy="20" r="1.5"></circle>
+        <circle id="Dot3" fill="#FFFFFF" cx="24" cy="25" r="1.5"></circle>
+    </g>
+</svg>

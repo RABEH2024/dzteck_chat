@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="24px" height="24px" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>User Icon</title>
+    <g id="User-Icon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <circle id="Background" fill="#DCF8C6" cx="12" cy="12" r="12"></circle>
+        <path d="M12,13 C14.2091,13 16,11.2091 16,9 C16,6.79086 14.2091,5 12,5 C9.79086,5 8,6.79086 8,9 C8,11.2091 9.79086,13 12,13 Z" id="Head" fill="#5B3A94"></path>
+        <path d="M18,19 C18,15.6863 15.3137,13 12,13 C8.68629,13 6,15.6863 6,19" id="Body" stroke="#5B3A94" stroke-width="2" stroke-linecap="round"></path>
+    </g>
+</svg>
