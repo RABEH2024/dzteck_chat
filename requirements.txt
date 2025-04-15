@@ -1,5 +1,0 @@
-flask
-flask_sqlalchemy
-sqlalchemy
-openai
-requests
