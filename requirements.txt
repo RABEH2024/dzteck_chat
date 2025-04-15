@@ -1,9 +1,10 @@
-gunicorn
+
+flask
 flask_sqlalchemy
 psycopg2-binary
 requests
 python-dotenv
-gunicorn  flask
+gunicorn
 git add requirements.txt
-git commit -m "add gunicorn to requirements"
+git commit -m "fix requirements formatting"
 git push origin main
