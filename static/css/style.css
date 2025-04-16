@@ -1,120 +1,274 @@
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* عام */
 body {
-    font-family: 'Cairo', sans-serif;
-    background-color: #f4f4f9;
-    margin: 0;
-    padding: 0;
+  font-family: 'Cairo', sans-serif;
+  background-color: #f5f7fa;
+  color: #333;
+  direction: rtl;
+  text-align: right;
 }
 
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  outline: none;
+}
+
+/* الحاوية العامة */
 .chat-container {
-    max-width: 800px;
-    margin: auto;
-    padding: 20px;
-    background: #fff;
-    box-shadow: 0 0 12px rgba(0,0,0,0.1);
-    border-radius: 12px;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
 }
 
+/* الرأس */
 .chat-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 2px solid #eee;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #ddd;
 }
 
-.header-left .rahmani-credit {
-    font-size: 14px;
-    color: #777;
-}
-.rahmani-credit span {
-    color: #1e88e5;
-    font-weight: bold;
+.logo {
+  display: flex;
+  align-items: center;
 }
 
-.header-right {
-    display: flex;
-    align-items: center;
-}
 .logo-img {
-    width: 32px;
-    height: 32px;
-    margin-left: 10px;
-}
-.brand-name {
-    font-size: 20px;
-    font-weight: bold;
-    color: #2c3e50;
+  height: 40px;
+  margin-left: 10px;
 }
 
-.model-selector {
-    margin-bottom: 15px;
-}
-.model-selector label {
-    font-weight: bold;
-    display: block;
-    margin-bottom: 5px;
-}
-.model-selector select {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 6px;
+.chat-header h1 {
+  font-size: 22px;
+  color: #2c3e50;
+  font-weight: bold;
 }
 
-.new-chat-button {
-    display: inline-block;
-    background-color: #1e88e5;
-    color: white;
-    padding: 10px 18px;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background-color 0.3s ease;
-}
-.new-chat-button:hover {
-    background-color: #1565c0;
+/* العودة */
+.back-button .back-icon {
+  width: 28px;
+  margin-left: 10px;
 }
 
+/* شارات النموذج */
+.model-badge {
+  background-color: #2e8b57;
+  color: white;
+  padding: 5px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+/* قائمة المحادثات */
 .chat-list {
-    margin-bottom: 20px;
+  margin: 20px 0;
 }
+
 .chat-item {
-    display: flex;
-    justify-content: space-between;
-    padding: 8px 10px;
-    margin-bottom: 5px;
-    background-color: #f1f1f1;
-    border-radius: 6px;
-    text-decoration: none;
-    color: #333;
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+  margin-bottom: 10px;
+  background-color: white;
+  border-radius: 10px;
+  transition: background 0.3s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
 }
+
 .chat-item:hover {
-    background-color: #e0e0e0;
+  background-color: #f0f0f0;
 }
 
+.chat-title {
+  font-weight: bold;
+}
+
+.chat-date {
+  color: #888;
+  font-size: 12px;
+}
+
+/* منطقة إدخال الرسائل */
+.input-area {
+  display: flex;
+  margin-top: 20px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.input-area input {
+  flex-grow: 1;
+  border: none;
+  padding: 15px;
+  font-size: 15px;
+}
+
+.input-area button {
+  background-color: #3498db;
+  padding: 0 20px;
+}
+
+.input-area button img {
+  height: 20px;
+}
+
+/* الرسائل */
+.chat-box {
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.message {
+  display: flex;
+  align-items: flex-start;
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+}
+
+.message.user-message {
+  background-color: #e8f5e9;
+}
+
+.message.bot-message {
+  background-color: #e3f2fd;
+}
+
+.message-icon img {
+  width: 32px;
+  margin-left: 10px;
+}
+
+.message-content {
+  flex: 1;
+  font-size: 14.5px;
+}
+
+/* النموذج والإجراءات */
+.model-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+}
+
+.delete-chat-form {
+  margin-right: 10px;
+}
+
+.delete-button img {
+  width: 24px;
+}
+
+/* معلومات إضافية */
 .info-banner {
-    margin-top: 20px;
-    background-color: #e3f2fd;
-    padding: 15px;
-    border-radius: 8px;
-    text-align: center;
-}
-.info-text {
-    margin-bottom: 10px;
-    color: #333;
-}
-.download-app {
-    background-color: #388e3c !important;
+  margin-top: 30px;
+  background-color: #fefefe;
+  padding: 15px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  text-align: center;
+  font-size: 14px;
 }
 
-.chat-footer {
-    margin-top: 30px;
-    text-align: center;
-    color: #777;
+/* زر إنشاء */
+.new-chat-button {
+  background-color: #2e8b57;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 10px;
+  margin-top: 15px;
+  font-size: 15px;
+  transition: background 0.3s;
 }
+
+.new-chat-button:hover {
+  background-color: #276f47;
+}
+
+/* الفوتر */
+.chat-footer {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 13px;
+  color: #666;
+}
+
 .footer-tagline {
-    font-size: 14px;
+  margin-top: 5px;
+}
+
+/* زر تحميل التطبيق */
+.download-app-button {
+  display: inline-block;
+  margin-top: 15px;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.download-app-button:hover {
+  background-color: #0056b3;
+}
+
+/* القائمة المنسدلة */
+.model-selector {
+  margin-top: 20px;
+}
+
+select#model-select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  margin-top: 5px;
+}
+
+/* استجابة للجوال */
+@media (max-width: 600px) {
+  .chat-header h1 {
+    font-size: 18px;
+  }
+
+  .chat-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chat-date {
     margin-top: 5px;
+  }
+
+  .input-area input {
+    font-size: 14px;
+  }
+
+  .new-chat-button,
+  .download-app-button {
+    width: 100%;
+  }
 }
