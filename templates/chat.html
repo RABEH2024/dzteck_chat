@@ -15,12 +15,26 @@
 <body>
     <div class="chat-container">
         <header class="chat-header">
-            <div class="logo">
-                <a href="{{ url_for('index') }}" class="back-button">
-                    <img src="{{ url_for('static', filename='img/back-icon.svg') }}" alt="العودة" class="back-icon">
-                </a>
-                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
-                <h1>{{ chat.title }}</h1>
+            <div class="navbar">
+                <div class="navbar-right">
+                    <a href="{{ url_for('index') }}" class="back-button">
+                        <img src="{{ url_for('static', filename='img/back-icon.svg') }}" alt="العودة" class="back-icon">
+                    </a>
+                    <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
+                </div>
+                
+                <div class="navbar-title">
+                    <h1>{{ chat.title }}</h1>
+                </div>
+                
+                <div class="navbar-left">
+                    <a href="/login" title="تسجيل الدخول" class="icon-button">
+                        <i class="fas fa-sign-in-alt"></i>
+                    </a>
+                    <a href="/download" title="تحميل التطبيق" class="icon-button">
+                        <i class="fas fa-download"></i>
+                    </a>
+                </div>
             </div>
         </header>
 
@@ -36,7 +50,6 @@
         </div>
 
         <div class="chat-box" id="chat-box">
-            <!-- عرض رسائل المحادثة من قاعدة البيانات -->
             {% for message in messages %}
                 {% if message.role != 'system' %}
                 <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}">
@@ -69,11 +82,11 @@
         </footer>
     </div>
 
-    <!-- Hidden field to store chat ID -->
+    <!-- Hidden fields -->
     <input type="hidden" id="chat-id" value="{{ chat.id }}">
     <input type="hidden" id="model-name" value="{{ chat.model }}">
 
-    <!-- Scripts -->
+    <!-- JS -->
     <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </body>
 </html>
