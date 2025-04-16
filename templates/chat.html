@@ -3,164 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ chat.title }} - DzTeck.ai</title>
+    <!-- يجب أن يكون العنوان ديناميكيًا من الخادم -->
+    <title>{{ chat.title | default('محادثة جديدة') }} - DzTeck.ai</title>
     <meta name="description" content="DzTeck.ai - واجهة محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Custom CSS -->
+    <!-- *** تأكد من ربط ملف CSS الموحد والصحيح *** -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Inline styles removed for clarity, assuming they are (or should be) in style.css -->
 </head>
 <body>
     <div class="chat-container">
         <header class="chat-header">
             <div class="logo">
                 <a href="{{ url_for('index') }}" class="back-button">
-                    <!-- تأكد من وجود هذا الملف أو استبدله بـ Font Awesome -->
-                    <img src="{{ url_for('static', filename='img/back-icon.svg') }}" alt="Back" class="back-icon">
-                    <!-- بديل Font Awesome: <i class="fas fa-arrow-right"></i> -->
+                    <!-- تأكد من أن مسار الأيقونة صحيح أو استخدم Font Awesome -->
+                    <img src="{{ url_for('static', filename='img/back-icon.svg') }}" alt="رجوع" class="back-icon" onerror="this.style.display='none'; this.onerror=null;">
+                    <!-- بديل Font Awesome إذا لم تعمل الصورة -->
+                    <!-- <i class="fas fa-arrow-right back-icon"></i> -->
                 </a>
                 <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
             </div>
             <div class="header-content">
-                <h1 class="site-name">DzTeck.ai</h1>
-                <span class="creator-info">by <strong>Rahmani</strong> – Founder & Lead Developer</span>
+                <!-- العنوان يمكن أن يكون عنوان المحادثة -->
+                <h1 class="site-name">{{ chat.title | default('DzTeck.ai') }}</h1>
+                <span class="creator-info">نموذج: {{ chat.model | default('غير محدد') }}</span>
             </div>
         </header>
 
+        <!-- منطقة عرض الرسائل -->
         <div class="chat-box" id="chat-box">
+            <!-- رسالة ترحيب أولية (إذا كانت المحادثة جديدة) -->
+            {% if not messages %}
+             <div class="message bot-message">
+                <div class="message-icon">
+                    <img src="{{ url_for('static', filename='img/bot-icon.svg') }}" alt="Bot">
+                </div>
+                <div class="message-content">
+                    مرحباً بك في DzTeck! كيف يمكنني مساعدتك اليوم؟
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- عرض الرسائل المحفوظة من الخادم -->
             {% for message in messages %}
-                {% if message.role != 'system' %}
-                    {# --- إضافة data-message-id هنا --- #}
-                    {# --- تأكد من أن message.id متاح من الـ backend --- #}
-                    <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}" data-message-id="{{ message.id | default('unknown') }}">
-                        <div class="message-icon">
-                            <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}">
-                        </div>
-                        <div class="message-content">
-                            {{ message.content | safe }} {# استخدم safe إذا كان المحتوى قد يتضمن HTML بسيط تم إنشاؤه بأمان #}
-
-                            {# --- إضافة زر الحذف للمستخدم فقط --- #}
-                            {% if message.role == 'user' %}
-                            <button class="delete-msg-btn" title="حذف الرسالة" data-message-id="{{ message.id | default('unknown') }}">
-                                <i class="fas fa-trash-alt"></i>
-                            </button>
-                            {% endif %}
-                            {# --- نهاية زر الحذف --- #}
-                        </div>
+                {# --- تأكد من أن message.id متاح من الخادم --- #}
+                <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}" data-message-id="{{ message.id | default('unknown_id_' + loop.index|string) }}">
+                    <div class="message-icon">
+                        <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}">
                     </div>
-                {% endif %}
+                    <div class="message-content">
+                        {# استخدم safe إذا كان المحتوى يتضمن HTML/Markdown تم تحويله بأمان #}
+                        {{ message.content | safe }}
+
+                        {# --- إضافة زر الحذف لرسائل المستخدم فقط --- #}
+                        {% if message.role == 'user' %}
+                        <button class="delete-msg-btn" title="حذف الرسالة" data-msg-id="{{ message.id | default('unknown_id_' + loop.index|string) }}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        {% endif %}
+                        {# --- نهاية زر الحذف --- #}
+                    </div>
+                </div>
             {% endfor %}
+            <!-- سيتم إضافة الرسائل الجديدة هنا بواسطة JavaScript -->
         </div>
+        <!-- نهاية منطقة عرض الرسائل -->
 
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="اكتب رسالتك هنا...">
-            <button id="send-button">
-                <!-- تأكد من وجود هذا الملف أو استبدله بـ Font Awesome -->
-                <img src="{{ url_for('static', filename='img/send-icon.svg') }}" alt="إرسال">
-                <!-- بديل Font Awesome: <i class="fas fa-paper-plane"></i> -->
-            </button>
+        <!-- منطقة الإدخال ومفتاح API -->
+        <div class="input-section">
+            <div class="input-area">
+                <input type="text" id="user-input" placeholder="اكتب رسالتك هنا..." autocomplete="off">
+                <button id="send-button" title="إرسال">
+                    <!-- تأكد من وجود الأيقونة أو استخدم Font Awesome -->
+                    <img src="{{ url_for('static', filename='img/send-icon.svg') }}" alt="إرسال" onerror="this.style.display='none'; this.onerror=null;">
+                    <!-- <i class="fas fa-paper-plane"></i> -->
+                </button>
+            </div>
+            <div class="api-key-area">
+                <label for="api-key">مفتاح OpenRouter:</label>
+                <input type="password" id="api-key" placeholder="أدخل مفتاح API الخاص بك">
+                <button id="toggle-api-key" title="إظهار/إخفاء المفتاح">
+                    <img src="{{ url_for('static', filename='img/eye-icon.svg') }}" alt="Toggle Visibility" onerror="this.style.display='none'; this.onerror=null;">
+                    <!-- <i class="fas fa-eye"></i> -->
+                </button>
+            </div>
         </div>
-
-        <div class="info-banner">
-            <p class="info-text">يتم استخدام خدمة OpenRouter للاتصال بنماذج الذكاء الاصطناعي المختلفة. استمتع بالمحادثة!</p>
-            <div class="model-badge">{{ chat.model }}</div>
-        </div>
+        <!-- نهاية منطقة الإدخال -->
 
         <footer class="chat-footer">
-            <p>DzTeck.ai © 2025 - Advanced Arabic AI Chat Interface</p>
-            <p class="footer-tagline">Connect with world-class AI models, effortlessly in your language</p>
-            <a href="#" class="download-app-button">
-                <i class="fas fa-download"></i> Download CSD App
-            </a>
+            <p>DzTeck.ai © 2025</p>
+            <p class="footer-tagline">واجهة محادثة عربية متقدمة</p>
         </footer>
+
+        <!-- Hidden Fields (تأكد من تمرير هذه القيم من الخادم) -->
+        <input type="hidden" id="chat-id" value="{{ chat.id | default('new') }}">
+        <input type="hidden" id="model-name" value="{{ chat.model | default('mistralai/mistral-7b-instruct-v0.2') }}">
     </div>
 
-    <!-- Hidden Fields -->
-    <input type="hidden" id="chat-id" value="{{ chat.id }}">
-    <input type="hidden" id="model-name" value="{{ chat.model }}">
-
-    <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
-    {# --- إضافة كود JavaScript للحذف هنا أو في ملف chat.js --- #}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const chatBox = document.getElementById('chat-box');
-            const chatId = document.getElementById('chat-id').value;
-
-            if (chatBox) {
-                chatBox.addEventListener('click', function(event) {
-                    // ابحث عن زر الحذف الذي تم النقر عليه أو أحد عناصره الداخلية (الأيقونة)
-                    const deleteButton = event.target.closest('.delete-msg-btn');
-
-                    if (deleteButton) {
-                        const messageId = deleteButton.dataset.messageId;
-                        const messageElement = deleteButton.closest('.message');
-
-                        if (messageId && messageId !== 'unknown' && messageElement) {
-                            if (confirm('هل أنت متأكد أنك تريد حذف هذه الرسالة؟')) {
-                                console.log(`Requesting delete for chat ${chatId}, message ${messageId}`);
-
-                                // !!! استدعاء الـ Backend هنا !!!
-                                fetch(`/delete_message/${chatId}/${messageId}`, { // <-- تأكد من أن هذا المسار صحيح
-                                    method: 'DELETE', // أو POST حسب تصميمك
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        // قد تحتاج إلى إضافة headers للمصادقة إذا لزم الأمر
-                                        // 'X-CSRFToken': '{{ csrf_token() }}' // مثال لـ Flask/Django CSRF
-                                    },
-                                })
-                                .then(response => {
-                                    if (!response.ok) {
-                                        // إذا فشل الطلب، حاول قراءة الرسالة النصية للخطأ
-                                        return response.text().then(text => {
-                                            throw new Error(`فشل حذف الرسالة: ${response.status} ${response.statusText} - ${text}`);
-                                        });
-                                    }
-                                    // قد يعيد الخادم استجابة JSON أو فقط حالة نجاح
-                                    // return response.json(); // إذا كان الخادم يعيد JSON
-                                    return { success: true }; // افتراض النجاح إذا كانت الاستجابة OK
-                                })
-                                .then(data => {
-                                    if (data.success) {
-                                        console.log('Message deleted successfully on server.');
-                                        // إزالة الرسالة من الواجهة
-                                        messageElement.remove();
-                                        // يمكنك إضافة إشعار صغير هنا
-                                        alert('تم حذف الرسالة بنجاح.');
-                                    } else {
-                                        // في حالة وجود بيانات خطأ مخصصة من الخادم
-                                        throw new Error(data.error || 'فشل حذف الرسالة لسبب غير معروف.');
-                                    }
-                                })
-                                .catch(error => {
-                                    console.error('Error deleting message:', error);
-                                    alert(`حدث خطأ أثناء حذف الرسالة: ${error.message}`);
-                                });
-                            }
-                        } else {
-                            console.warn('Could not find message ID or message element for deletion.');
-                        }
-                    }
-                });
-            }
-
-            // ----- الكود الحالي في chat.js يجب أن يبقى هنا أو يتم دمجه -----
-            // مثال: ربط زر الإرسال وما إلى ذلك...
-            const sendButton = document.getElementById('send-button');
-            const userInput = document.getElementById('user-input');
-            // ... باقي الكود من chat.js ...
-             // دالة للتمرير لأسفل
-            function scrollToBottom() {
-                if (chatBox) {
-                    chatBox.scrollTop = chatBox.scrollHeight;
-                }
-            }
-            // التمرير لأسفل عند التحميل
-            scrollToBottom();
-
-        });
-    </script>
-
+    <!-- *** ربط ملف JavaScript الخاص بالدردشة والذي يحتوي الآن على منطق الحذف *** -->
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
