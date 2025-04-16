@@ -11,30 +11,6 @@
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-
-    <style>
-        .download-btn {
-            background-color: #2196F3;
-            color: white;
-            padding: 10px 24px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-            transition: background-color 0.3s ease;
-            margin: 20px auto;
-        }
-
-        .download-btn:hover {
-            background-color: #1976D2;
-        }
-
-        .download-section {
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
     <div class="chat-container">
@@ -62,14 +38,14 @@
             <div class="model-selector">
                 <label for="model-select">اختر النموذج:</label>
                 <select id="model-select" name="model">
-                    <!-- نماذج مجانية أكثر ذكاءً من OpenRouter -->
+                    <!-- نماذج مجانية -->
                     <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (مجاني)</option>
                     <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
                     <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
                     <option value="openchat/openchat-7b">OpenChat 7B (مجاني)</option>
                     <option value="gryphe/mythomist-7b">MythoMist 7B (مجاني)</option>
                     <option value="01-ai/yi-1.5-9b-chat">Yi 1.5 9B Chat (مجاني)</option>
-                    <!-- نماذج مدفوعة أكثر تقدماً -->
+                    <!-- نماذج مدفوعة -->
                     <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
                     <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
                     <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
@@ -78,25 +54,22 @@
             <button type="submit" class="new-chat-button">إنشاء محادثة جديدة</button>
         </form>
 
+        <!-- Info & App Download -->
         <div class="info-banner">
             <p class="info-text">أهلاً بك في DzTeck شات! يمكنك التحدث مع عدة نماذج ذكاء اصطناعي عبر واجهتنا العربية. اختر نموذجًا وابدأ محادثة جديدة.</p>
-        </div>
-
-        <!-- قسم تحميل التطبيق -->
-        <div class="download-section">
-            <a class="download-btn"
-               href="https://storage.googleapis.com/appilder/app/9844f0a4a01716fdcd6092c2641291f6/3eec5958334e4e211093c41bc644f69d.apk?GoogleAccessId=desktopapi%40appilder-com.iam.gserviceaccount.com&Expires=1745696277&Signature=Z0zeEdl9cPAakOwms1h%2FlSVS3KSIwh0GAUwyG%2Fhjo2vnSRNn%2Br0MRMJvz081M0%2BLVNX8O%2FqaVGnu4vYo0A3o6n%2FGKyBywNFtLvYyUt6FiC7B6W1UQ%2BP3kwoQXicfGEwi8ABYwuODzg7XMcjlLvmnw9S7HeltHL%2F3XJz0smZrOlppjJwhVwiOg2A%2BYpSczHJkVhaul5UdaeUzSRlQyuC1%2Boql1W5Oh%2FP0%2FjWp5a37bCWn%2BRsTuOzLs3VJJa0V9ETJAnA4kAQI%2FWmi2fXzWZSb3PQEExPxqaokldkzUBRcwWdHNMHT8w0%2FxbFKydwYw5XQZlPBsLdfiD7kScuNuvNTeQ%3D%3D"
-               target="_blank">
-               <i class="fa fa-download"></i> تحميل التطبيق
+            
+            <!-- زر تحميل التطبيق -->
+            <a href="https://storage.googleapis.com/appilder/app/9844f0a4a01716fdcd6092c2641291f6/3eec5958334e4e211093c41bc644f69d.apk?GoogleAccessId=desktopapi%40appilder-com.iam.gserviceaccount.com&Expires=1745696277&Signature=Z0zeEdl9cPAakOwms1h%2FlSVS3KSIwh0GAUwyG%2Fhjo2vnSRNn%2Br0MRMJvz081M0%2BLVNX8O%2FqaVGnu4vYo0A3o6n%2FGKyBywNFtLvYyUt6FiC7B6W1UQ%2BP3kwoQXicfGEwi8ABYwuODzg7XMcjlLvmnw9S7HeltHL%2F3XJz0smZrOlppjJwhVwiOg2A%2BYpSczHJkVhaul5UdaeUzSRlQyuC1%2Boql1W5Oh%2FP0%2FjWp5a37bCWn%2BRsTuOzLs3VJJa0V9ETJAnA4kAQI%2FWmi2fXzWZSb3PQEExPxqaokldkzUBRcwWdHNMHT8w0%2FxbFKydwYw5XQZlPBsLdfiD7kScuNuvNTeQ%3D%3D" 
+               class="new-chat-button" style="background-color: #2e8b57; margin-top: 10px;" download>
+                <i class="fa fa-download"></i> تحميل تطبيق DzTeck
             </a>
         </div>
 
+        <!-- Footer -->
         <footer class="chat-footer">
-            <p>DzTeck &copy; 2025 - محادثة ذكية اصطناعية متقدمة باللغة العربية</p>
-            <p class="footer-tagline">تواصل مع أفضل نماذج الذكاء الاصطناعي العالمية بسهولة وبلغتك</p>
+            <p>DzTeck &copy; 2025</p>
+            <p class="footer-tagline">محادثة ذكية اصطناعية متقدمة باللغة العربية</p>
         </footer>
     </div>
-
-    <!-- No scripts needed for index page -->
 </body>
 </html>
