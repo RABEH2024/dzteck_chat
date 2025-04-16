@@ -3,72 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DzTeck.ai - منصة المحادثة الذكية</title>
-    <meta name="description" content="DzTeck.ai - محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter">
+    <title>{{ chat.title | default('محادثة') }} - DzTeck.ai</title>
+    <meta name="description" content="محادثة ذكية مع {{ chat.model | default('نموذج AI') }} عبر DzTeck.ai">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- *** تأكد من ربط ملف CSS الموحد والصحيح *** -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="chat-container">
+        <!-- الهيدر بالتصميم الأصلي لـ chat -->
         <header class="chat-header">
-            <div class="header-left">
-                <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
+            <div class="logo">
+                <a href="{{ url_for('index') }}" class="back-button" title="العودة لقائمة المحادثات">
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img" onerror="this.style.display='none'">
             </div>
-            <div class="header-right">
-                <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
-                <span class="brand-name">DzTeck.ai</span>
+            <div class="header-content">
+                <h1 class="site-name">{{ chat.title | default('محادثة') }}</h1>
+                <span class="creator-info">النموذج: {{ chat.model | default('غير محدد') }}</span>
+            </div>
+            <div class="header-actions">
+                <!-- زر حذف المحادثة بأكملها -->
+                <button id="delete-chat-btn" title="حذف هذه المحادثة">
+                    <i class="fas fa-trash-alt"></i> مسح المحادثة
+                </button>
             </div>
         </header>
 
-        <!-- منطقة المحتوى الرئيسي للصفحة الرئيسية -->
-        <main class="main-content">
-            {% if chats and chats|length > 0 %}
-            <div class="chat-list">
-                {% for chat in chats %}
-                <a href="{{ url_for('view_chat', chat_id=chat.id) }}" class="chat-item">
-                    <span class="chat-title">{{ chat.title }}</span>
-                    <span class="chat-date">{{ chat.updated_at.strftime('%Y-%m-%d %H:%M') }}</span>
-                </a>
-                {% endfor %}
-            </div>
-            {% endif %}
-
-            <!-- نموذج إنشاء محادثة جديدة -->
-            <form action="{{ url_for('create_chat') }}" method="post" class="new-chat-form">
-                <div class="model-selector">
-                    <label for="model-select">اختر النموذج:</label>
-                    <select id="model-select" name="model">
-                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (مجاني)</option>
-                        <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
-                        <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
-                        <option value="openchat/openchat-7b">OpenChat 7B (مجاني)</option>
-                        <option value="gryphe/mythomist-7b">MythoMist 7B (مجاني)</option>
-                        <option value="01-ai/yi-1.5-9b-chat">Yi 1.5 9B Chat (مجاني)</option>
-                        <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
-                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
-                        <!-- أضف نماذج أخرى حسب الحاجة -->
-                    </select>
+        <!-- منطقة عرض الرسائل -->
+        <div class="chat-box" id="chat-box">
+            {# عرض الرسائل المحفوظة من الخادم #}
+            {# تأكد أن الخادم يمرر messages وأن كل message بها id, role, content #}
+            {% for message in messages %}
+            <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}" data-message-id="{{ message.id }}"> {# *** ID ضروري من الخادم *** #}
+                <div class="message-icon">
+                    <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}" onerror="this.style.display='none'">
                 </div>
-                <button type="submit" class="new-chat-button">بدء محادثة جديدة</button>
-            </form>
+                <div class="message-content">
+                    {# استخدم safe إذا كان المحتوى قد يتضمن HTML/Markdown تم تحويله بأمان #}
+                    {{ message.content | safe }}
 
-            <div class="info-banner">
-                <p class="info-text">مرحبًا بك في DzTeck.ai! تحدث مع نماذج ذكاء اصطناعي متطورة من خلال واجهتنا العربية.</p>
-                <!-- تأكد من أن هذا الزر له وظيفة أو رابط صحيح -->
-                <a href="#" class="download-app-button">
-                    <i class="fa fa-download"></i> تحميل تطبيق DzTeck
-                </a>
+                    {# زر حذف الرسالة الفردية (يأتي من الخادم هنا) #}
+                    {% if message.role == 'user' %}
+                    <button class="delete-msg-btn" title="حذف الرسالة">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    {% endif %}
+                </div>
             </div>
-        </main>
-        <!-- نهاية منطقة المحتوى الرئيسي -->
+            {% endfor %}
+            {# الرسائل الجديدة ستضاف هنا بواسطة JS #}
+        </div>
+        <!-- نهاية منطقة عرض الرسائل -->
 
+        <!-- منطقة الإدخال (بدون حقل API) -->
+        <div class="input-section">
+            <div class="input-area">
+                <textarea id="user-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea> {# استخدام textarea #}
+                <button id="send-button" title="إرسال">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+        <!-- نهاية منطقة الإدخال -->
+
+        <!-- الفوتر بالتصميم الأصلي -->
         <footer class="chat-footer">
-            <p>© 2025 DzTeck.ai</p>
-            <p class="footer-tagline">محادثة ذكية وعصرية بلغتك العربية</p>
+            <p>© {{ now.year | default('2024') }} DzTeck.ai - بواسطة رحماني</p>
+            <p class="footer-tagline">تواصل بذكاء، تحدث بلغتك.</p>
         </footer>
+
+        <!-- حقول مخفية (تأكد من تمرير chat.id من الخادم) -->
+        <input type="hidden" id="chat-id" value="{{ chat.id }}">
+        {# لم نعد بحاجة لـ model-name هنا إذا كان الخادم يعالجه #}
+        {# <input type="hidden" id="model-name" value="{{ chat.model }}"> #}
     </div>
-    <!-- لا يوجد حاجة لربط script.js الخاص بالدردشة هنا -->
+
+    <!-- ربط ملف JavaScript المحدث -->
+    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </body>
 </html>
