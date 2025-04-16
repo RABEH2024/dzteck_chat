@@ -1,83 +1,204 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<!DOCTYPE html><html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ chat.title }} - DzTeck شات</title>
-    <meta name="description" content="DzTeck - واجهة محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter">
-    
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <title>{{ chat.title }} - DzTeck.ai</title>
+    <meta name="description" content="DzTeck.ai - واجهة محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter"><!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+    body {
+        font-family: 'Arial', sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+    }
+
+    .chat-container {
+        max-width: 800px;
+        margin: auto;
+        background-color: #fff;
+        box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .chat-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px 15px;
+        background-color: #f8f8f8;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+    }
+
+    .logo-img {
+        height: 35px;
+        margin-left: 10px;
+    }
+
+    .back-button {
+        margin-left: 10px;
+    }
+
+    .header-content {
+        text-align: right;
+    }
+
+    .site-name {
+        font-size: 1.1rem;
+        color: #2c3e50;
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .creator-info {
+        font-size: 0.85rem;
+        color: #888;
+    }
+
+    .chat-box {
+        flex-grow: 1;
+        padding: 15px;
+        overflow-y: auto;
+    }
+
+    .message {
+        display: flex;
+        margin-bottom: 15px;
+    }
+
+    .message-icon img {
+        height: 30px;
+        margin-left: 10px;
+    }
+
+    .message-content {
+        background-color: #f0f0f0;
+        padding: 10px 15px;
+        border-radius: 10px;
+        max-width: 75%;
+    }
+
+    .user-message .message-content {
+        background-color: #d1e7dd;
+    }
+
+    .input-area {
+        display: flex;
+        padding: 10px;
+        border-top: 1px solid #ddd;
+    }
+
+    .input-area input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    .input-area button {
+        background: #3498db;
+        border: none;
+        padding: 0 15px;
+        color: white;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .info-banner {
+        background-color: #eef;
+        padding: 10px 15px;
+        border-top: 1px solid #ccc;
+    }
+
+    .chat-footer {
+        text-align: center;
+        padding: 10px;
+        font-size: 0.85rem;
+        background-color: #fafafa;
+        border-top: 1px solid #ddd;
+    }
+
+    .footer-tagline {
+        color: #777;
+    }
+
+    .download-app-button {
+        display: inline-block;
+        margin-top: 10px;
+        padding: 8px 15px;
+        background-color: #2e8b57;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+</style>
+
 </head>
 <body>
     <div class="chat-container">
         <header class="chat-header">
             <div class="logo">
                 <a href="{{ url_for('index') }}" class="back-button">
-                    <img src="{{ url_for('static', filename='img/back-icon.svg') }}" alt="العودة" class="back-icon">
+                    <img src="{{ url_for('static', filename='img/back-icon.svg') }}" alt="Back" class="back-icon">
                 </a>
                 <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
-                <h1>{{ chat.title }}</h1>
             </div>
-        </header>
-
-        <div class="model-info">
-            <span class="model-badge">{{ chat.model }}</span>
-            <div class="chat-actions">
-                <form action="{{ url_for('delete_chat', chat_id=chat.id) }}" method="post" class="delete-chat-form">
-                    <button type="submit" class="delete-button" onclick="return confirm('هل أنت متأكد من حذف هذه المحادثة؟')">
-                        <img src="{{ url_for('static', filename='img/delete-icon.svg') }}" alt="حذف">
-                    </button>
-                </form>
+            <div class="header-content">
+                <h1 class="site-name">DzTeck.ai</h1>
+                <span class="creator-info">by <strong>Rahmani</strong> – Founder & Lead Developer</span>
             </div>
-        </div>
-
-        <div class="chat-box" id="chat-box">
-            {% for message in messages %}
-                {% if message.role != 'system' %}
-                <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}">
-                    <div class="message-icon">
-                        <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}">
-                    </div>
-                    <div class="message-content">
-                        {{ message.content }}
-                    </div>
+        </header><div class="chat-box" id="chat-box">
+        {% for message in messages %}
+            {% if message.role != 'system' %}
+            <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}">
+                <div class="message-icon">
+                    <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}">
                 </div>
-                {% endif %}
-            {% endfor %}
-        </div>
-
-        <div class="input-area">
-            <input type="text" id="user-input" placeholder="اكتب رسالتك هنا...">
-            <button id="send-button">
-                <img src="{{ url_for('static', filename='img/send-icon.svg') }}" alt="إرسال">
-            </button>
-        </div>
-
-        <div class="info-banner">
-            <p class="info-text">يتم استخدام خدمة OpenRouter للاتصال بنماذج الذكاء الاصطناعي المختلفة. استمتع بالمحادثة!</p>
-            <div class="model-badge">{{ chat.model }}</div>
-        </div>
-
-        <footer class="chat-footer">
-            <p>DzTeck &copy; 2025 - محادثة ذكية اصطناعية متقدمة باللغة العربية</p>
-            <p class="footer-tagline">تواصل مع أفضل نماذج الذكاء الاصطناعي العالمية بسهولة وبلغتك</p>
-
-            <!-- زر تحميل التطبيق -->
-            <a href="#" class="download-app-button">
-                <i class="fas fa-download"></i> تحميل تطبيق CSD
-            </a>
-        </footer>
+                <div class="message-content">
+                    {{ message.content }}
+                </div>
+            </div>
+            {% endif %}
+        {% endfor %}
     </div>
 
-    <!-- Hidden Fields -->
-    <input type="hidden" id="chat-id" value="{{ chat.id }}">
-    <input type="hidden" id="model-name" value="{{ chat.model }}">
+    <div class="input-area">
+        <input type="text" id="user-input" placeholder="اكتب رسالتك هنا...">
+        <button id="send-button">
+            <img src="{{ url_for('static', filename='img/send-icon.svg') }}" alt="إرسال">
+        </button>
+    </div>
 
-    <!-- Scripts -->
-    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <div class="info-banner">
+        <p class="info-text">يتم استخدام خدمة OpenRouter للاتصال بنماذج الذكاء الاصطناعي المختلفة. استمتع بالمحادثة!</p>
+        <div class="model-badge">{{ chat.model }}</div>
+    </div>
+
+    <footer class="chat-footer">
+        <p>DzTeck.ai &copy; 2025 - Advanced Arabic AI Chat Interface</p>
+        <p class="footer-tagline">Connect with world-class AI models, effortlessly in your language</p>
+        <a href="#" class="download-app-button">
+            <i class="fas fa-download"></i> Download CSD App
+        </a>
+    </footer>
+</div>
+
+<!-- Hidden Fields -->
+<input type="hidden" id="chat-id" value="{{ chat.id }}">
+<input type="hidden" id="model-name" value="{{ chat.model }}">
+
+<!-- Scripts -->
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+
 </body>
 </html>
