@@ -1,3 +1,5 @@
+/* static/css/style.css */
+
 /* Reset */
 * {
   margin: 0;
@@ -35,7 +37,6 @@ button {
 }
 
 /* الحاوية العامة */
-/* نجعل الحاوية تتمدد لملء المساحة وتدفع الفوتر للأسفل */
 .chat-container {
   max-width: 900px;
   width: 100%; /* تأخذ العرض الكامل حتى الحد الأقصى */
@@ -60,38 +61,43 @@ button {
 }
 
 /* --- Content Area --- */
-/* منطقة المحتوى الرئيسي (بما في ذلك chat-box أو chat-list) */
+/* منطقة المحتوى الرئيسي (بما في ذلك chat-box أو chat-list أو main-content) */
 .chat-box, .main-content {
   flex-grow: 1; /* يسمح لهذه المنطقة بالتمدد لملء المساحة المتاحة */
   padding: 15px 20px; /* padding للمحتوى */
   overflow-y: auto; /* إضافة تمرير للمحتوى إذا تجاوز المساحة */
 }
+/* تخصيصات لـ chat-box */
 .chat-box {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-/* ... (باقي تنسيقات Header و Logo كما هي أو عدلها حسب الحاجة) ... */
+/* تنسيقات Header المختلفة */
+.header-left, .header-right, .header-content {
+    display: flex;
+    align-items: center;
+}
 .logo {
     display: flex;
     align-items: center;
 }
 .logo-img {
-    height: 35px; /* تصغير قليل */
+    height: 35px;
     margin-left: 8px;
 }
-.site-name { /* في chat.html */
+.site-name { /* لـ chat.html */
     font-size: 1.1rem;
     color: #2c3e50;
     margin: 0;
     font-weight: 600;
 }
-.creator-info { /* في chat.html */
+.creator-info { /* لـ chat.html */
     font-size: 0.8rem;
     color: #777;
 }
-.rahmani-credit { /* في index.html */
+.rahmani-credit { /* لـ index.html */
     font-size: 0.9rem;
     color: #555;
 }
@@ -99,45 +105,42 @@ button {
     font-weight: bold;
     color: #333;
 }
-.brand-name { /* في index.html */
+.brand-name { /* لـ index.html */
     font-size: 1.2rem;
     font-weight: bold;
     color: #2c3e50;
-    margin-right: 8px; /* مسافة من اللوجو */
+    margin-right: 8px;
 }
 .back-button .back-icon {
-  width: 24px; /* تصغير أيقونة الرجوع */
+  width: 24px;
   height: 24px;
   margin-left: 10px;
-  vertical-align: middle; /* محاذاة أفضل */
+  vertical-align: middle;
 }
-.header-left, .header-right, .header-content {
-    display: flex;
-    align-items: center;
-}
-
 
 /* شارات النموذج */
 .model-badge {
-  background-color: #6c757d; /* لون رمادي */
+  background-color: #6c757d;
   color: white;
   padding: 4px 10px;
   border-radius: 15px;
   font-size: 12px;
   display: inline-block;
   margin-top: 8px;
-  margin-right: 5px; /* مسافة إذا كان بجانب نص */
+  margin-right: 5px;
 }
 
 /* قائمة المحادثات (index.html) */
+.main-content { /* لتطبيق padding على المحتوى الرئيسي في index.html */
+    padding: 15px 20px;
+}
 .chat-list {
   margin: 20px 0;
 }
-
 .chat-item {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* محاذاة العناصر عمودياً */
+  align-items: center;
   padding: 12px 15px;
   margin-bottom: 8px;
   background-color: white;
@@ -145,181 +148,218 @@ button {
   transition: background 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
   border: 1px solid #eee;
 }
-
 .chat-item:hover {
   background-color: #f8f9fa;
   box-shadow: 0 2px 5px rgba(0,0,0,0.08);
 }
-
 .chat-title {
-  font-weight: 600; /* أثقل قليلاً */
+  font-weight: 600;
   font-size: 1rem;
   color: #333;
 }
-
 .chat-date {
   color: #888;
   font-size: 12px;
-  flex-shrink: 0; /* منع التاريخ من الانكماش */
-  margin-right: 10px; /* مسافة من العنوان */
+  flex-shrink: 0;
+  margin-right: 10px;
 }
 
-/* منطقة إدخال الرسائل (chat.html) */
+/* منطقة إدخال الرسائل و API Key (chat.html) */
+.input-section { /* حاوية تجمع منطقة الإدخال ومفتاح API */
+    padding: 10px 15px;
+    background-color: #f8f9fa;
+    border-top: 1px solid #eee;
+    flex-shrink: 0;
+}
 .input-area {
   display: flex;
-  padding: 10px 15px; /* padding أقل */
-  background-color: #f8f9fa; /* نفس خلفية الرأس */
-  border-top: 1px solid #eee;
-  flex-shrink: 0; /* منع منطقة الإدخال من الانكماش */
+  align-items: center; /* محاذاة الحقل والزر */
+  margin-bottom: 10px; /* مسافة قبل حقل API */
 }
-
-.input-area input {
+.input-area input#user-input { /* استهداف حقل الإدخال */
   flex-grow: 1;
   border: 1px solid #ccc;
-  border-radius: 20px; /* حواف دائرية */
+  border-radius: 20px;
   padding: 10px 15px;
   font-size: 14px;
-  margin-left: 8px; /* مسافة من الزر */
+  margin-left: 8px;
 }
-
-.input-area button#send-button { /* استهداف زر الإرسال تحديدًا */
-  background-color: #007bff; /* أزرق */
+.input-area button#send-button {
+  background-color: #007bff;
   color: white;
-  border-radius: 50%; /* دائري */
-  width: 40px; /* تحديد حجم */
+  border-radius: 50%;
+  width: 40px;
   height: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   transition: background-color 0.2s;
+  flex-shrink: 0; /* منع الزر من الانكماش */
 }
 .input-area button#send-button:hover {
     background-color: #0056b3;
 }
-
-.input-area button img {
-  height: 18px; /* حجم أيقونة الإرسال */
+.input-area button#send-button img {
+  height: 18px;
   width: 18px;
-  filter: brightness(0) invert(1); /* جعل الأيقونة بيضاء */
+  filter: brightness(0) invert(1);
 }
+
+/* منطقة مفتاح API */
+.api-key-area {
+    display: flex;
+    align-items: center;
+}
+.api-key-area label {
+    margin-left: 5px;
+    font-size: 13px;
+    color: #555;
+    flex-shrink: 0;
+}
+.api-key-area input#api-key {
+    flex-grow: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 5px 8px;
+    font-size: 12px;
+    margin-left: 5px;
+}
+.api-key-area button#toggle-api-key {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    flex-shrink: 0;
+}
+.api-key-area button#toggle-api-key img {
+    width: 18px;
+    height: 18px;
+    opacity: 1;
+    vertical-align: middle;
+}
+
 
 /* الرسائل (chat.html) */
-/* .chat-box تم نقله للأعلى */
-
 .message {
   display: flex;
-  align-items: flex-start; /* محاذاة الأيقونة مع بداية النص */
-  max-width: 85%; /* حد أقصى لعرض الرسالة */
-  position: relative; /* مهم لتحديد موقع زر الحذف */
+  align-items: flex-start;
+  max-width: 85%;
+  position: relative;
 }
-
 .message.user-message {
-  align-self: flex-start; /* رسائل المستخدم على اليسار (لأن dir=rtl) */
-  /* background-color: #dcf8c6; /* أخضر فاتح للمستخدم */
-}
-
-.message.bot-message {
-  align-self: flex-end; /* رسائل البوت على اليمين */
-   /* background-color: #fff; /* أبيض للبوت */
-   /* border: 1px solid #eee; */
-}
-
-/* عكس المحاذاة لأننا نستخدم dir=rtl */
-.message.user-message {
-    margin-left: auto; /* دفع لليسار */
+  align-self: flex-start; /* بسبب RTL */
+  margin-left: auto;
 }
 .message.bot-message {
-    margin-right: auto; /* دفع لليمين */
+  align-self: flex-end; /* بسبب RTL */
+  margin-right: auto;
 }
-
-
+.message-icon {
+    flex-shrink: 0; /* منع الأيقونة من الانكماش */
+}
 .message-icon img {
-  width: 30px; /* تصغير الأيقونة قليلاً */
+  width: 30px;
   height: 30px;
-  margin-left: 10px; /* المسافة بين الأيقونة والبالون */
-  border-radius: 50%; /* أيقونة دائرية */
-  margin-top: 5px; /* محاذاة عمودية أفضل */
+  margin-left: 10px;
+  border-radius: 50%;
+  margin-top: 5px;
 }
-/* عكس الهامش للأيقونة في رسائل المستخدم */
 .message.user-message .message-icon {
-    order: 1; /* تغيير ترتيب الأيقونة لتظهر على اليسار */
+    order: 1; /* الأيقونة على اليسار */
     margin-left: 0;
-    margin-right: 10px; /* مسافة من النص */
+    margin-right: 10px;
 }
-
 .message-content {
   padding: 10px 15px;
-  border-radius: 15px; /* حواف أكثر دائرية */
+  border-radius: 15px;
   font-size: 14.5px;
-  word-wrap: break-word; /* كسر الكلمات الطويلة */
-  position: relative; /* للسماح بوضع زر الحذف فوقه */
+  word-wrap: break-word;
+  position: relative; /* لوضع زر الحذف */
 }
-
 .message.user-message .message-content {
-  background-color: #d1e7ff; /* أزرق فاتح للمستخدم */
-  border-bottom-left-radius: 5px; /* شكل مميز */
+  background-color: #d1e7ff;
+  border-bottom-left-radius: 5px;
   color: #333;
 }
-
 .message.bot-message .message-content {
-  background-color: #f0f0f0; /* رمادي فاتح للبوت */
-  border-bottom-right-radius: 5px; /* شكل مميز */
+  background-color: #f0f0f0;
+  border-bottom-right-radius: 5px;
   color: #333;
 }
 
 /* --- زر حذف الرسالة --- */
 .delete-msg-btn {
   position: absolute;
-  top: -8px;     /* تعديل الموضع حسب الحاجة */
-  left: -8px;    /* تعديل الموضع ليكون على اليسار (بسبب RTL) */
-  background-color: rgba(255, 82, 82, 0.8); /* أحمر شبه شفاف */
+  top: -8px;
+  left: -8px; /* لليسار بسبب RTL */
+  background-color: rgba(255, 82, 82, 0.8);
   color: white;
   border-radius: 50%;
   width: 22px;
   height: 22px;
   font-size: 12px;
-  line-height: 22px; /* لتوسيط الأيقونة عموديًا */
+  line-height: 22px;
   text-align: center;
-  opacity: 0; /* إخفاء بشكل افتراضي */
+  opacity: 0;
   visibility: hidden;
   transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
-  z-index: 1; /* ليكون فوق محتوى الرسالة */
+  z-index: 1;
 }
 .delete-msg-btn i {
-    vertical-align: middle; /* محاذاة أيقونة Font Awesome */
-    line-height: 22px; /* تأكيد توسيط الأيقونة */
+    vertical-align: middle;
+    line-height: 22px;
 }
-
-
 /* إظهار الزر عند المرور فوق رسالة المستخدم فقط */
 .message.user-message:hover .delete-msg-btn {
   opacity: 1;
   visibility: visible;
 }
-
 .delete-msg-btn:hover {
-  background-color: rgba(255, 0, 0, 1); /* أحمر أغمق عند المرور */
+  background-color: rgba(255, 0, 0, 1);
 }
-
 /* --- نهاية زر حذف الرسالة --- */
 
+/* مؤشر التفكير */
+.message.thinking .message-content {
+    background-color: #f0f0f0; /* نفس لون البوت */
+    padding: 10px 15px; /* ليتناسق */
+}
+.thinking-dots {
+    display: inline-block; /* ليكون بجانب أي نص آخر لو أضفته */
+}
+.thinking-dots span {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    background-color: #888;
+    border-radius: 50%;
+    margin: 0 2px;
+    animation: thinking-blink 1.4s infinite both;
+}
+.thinking-dots span:nth-child(1) { animation-delay: 0s; }
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
 
-/* النموذج والإجراءات (لم أجد استخدام لـ .model-info, .delete-chat-form في HTML) */
+@keyframes thinking-blink {
+    0%, 80%, 100% { opacity: 0.3; }
+    40% { opacity: 1; }
+}
+
 
 /* معلومات إضافية (Banner) */
 .info-banner {
-  margin-top: 10px; /* تقليل المسافة العلوية */
-  background-color: #e9ecef; /* لون أفتح للبانر */
+  margin-top: 10px;
+  background-color: #e9ecef;
   padding: 10px 15px;
   border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd; /* إضافة حد سفلي أيضاً */
+  border-bottom: 1px solid #ddd;
   text-align: center;
   font-size: 13px;
   color: #555;
-  flex-shrink: 0; /* منع الانكماش */
+  flex-shrink: 0;
 }
 .info-banner p {
-    margin-bottom: 5px; /* مسافة بين النص والشارة */
+    margin-bottom: 5px;
 }
 
 /* زر إنشاء جديد (index.html) */
@@ -331,18 +371,17 @@ button {
     border: 1px solid #eee;
 }
 .new-chat-button {
-  background-color: #28a745; /* أخضر */
+  background-color: #28a745;
   color: white;
-  padding: 10px 20px; /* padding */
-  border-radius: 20px; /* حواف دائرية */
+  padding: 10px 20px;
+  border-radius: 20px;
   margin-top: 10px;
   font-size: 15px;
   font-weight: bold;
   transition: background 0.3s;
-  display: inline-block; /* ليأخذ حجم المحتوى + padding */
-  width: auto; /* السماح له بالتمدد حسب النص */
+  display: inline-block;
+  width: auto;
 }
-
 .new-chat-button:hover {
   background-color: #218838;
 }
@@ -350,17 +389,16 @@ button {
 /* الفوتر */
 .chat-footer {
   text-align: center;
-  padding: 15px; /* padding للفوتر */
+  padding: 15px;
   font-size: 13px;
-  color: #777; /* لون أغمق قليلاً */
-  background-color: #f8f9fa; /* نفس لون الرأس */
+  color: #777;
+  background-color: #f8f9fa;
   border-top: 1px solid #eee;
-  flex-shrink: 0; /* منع الفوتر من الانكماش */
-  margin-top: auto; /* *** هذا مهم لدفع الفوتر لأسفل في Flex Container *** */
+  flex-shrink: 0;
+  margin-top: auto; /* يدفع الفوتر لأسفل */
 }
-
 .footer-tagline {
-  margin-top: 3px; /* مسافة أقل */
+  margin-top: 3px;
   font-size: 12px;
 }
 
@@ -368,24 +406,23 @@ button {
 .download-app-button {
   display: inline-block;
   margin-top: 10px;
-  background-color: #17a2b8; /* لون سماوي */
+  background-color: #17a2b8;
   color: white;
   padding: 8px 15px;
   border-radius: 5px;
   font-size: 14px;
   transition: background-color 0.2s;
 }
-
 .download-app-button:hover {
   background-color: #138496;
 }
 .download-app-button i {
-    margin-left: 5px; /* مسافة للأيقونة */
+    margin-left: 5px;
 }
 
 /* القائمة المنسدلة (index.html) */
 .model-selector {
-  margin-bottom: 15px; /* مسافة أسفل القائمة */
+  margin-bottom: 15px;
 }
 .model-selector label {
     display: block;
@@ -393,21 +430,20 @@ button {
     font-weight: bold;
     font-size: 14px;
 }
-
 select#model-select {
   width: 100%;
   padding: 10px 12px;
   border-radius: 5px;
   border: 1px solid #ccc;
   font-size: 14px;
-  background-color: white; /* خلفية بيضاء للقائمة */
+  background-color: white;
 }
 
 /* استجابة للجوال */
 @media (max-width: 600px) {
   .chat-container {
-      padding: 0; /* لا حاجة لـ padding جانبي في الجوال */
-      min-height: 100vh; /* التأكد من ملء الارتفاع */
+      padding: 0;
+      min-height: 100vh;
   }
   .chat-header {
       padding: 8px 10px;
@@ -430,7 +466,7 @@ select#model-select {
       padding: 10px;
   }
   .message {
-      max-width: 90%; /* السماح للرسائل بأخذ عرض أكبر */
+      max-width: 90%;
   }
   .message-content {
       font-size: 14px;
@@ -451,13 +487,17 @@ select#model-select {
   }
   .chat-date {
     margin-top: 5px;
-    margin-right: 0; /* إزالة الهامش */
+    margin-right: 0;
   }
 
-  .input-area {
+  /* تعديل منطقة الإدخال للجوال */
+  .input-section {
       padding: 8px;
   }
-  .input-area input {
+  .input-area {
+      margin-bottom: 8px; /* مسافة أقل */
+  }
+  .input-area input#user-input {
     font-size: 14px;
     padding: 8px 12px;
   }
@@ -465,14 +505,21 @@ select#model-select {
       width: 35px;
       height: 35px;
   }
-   .input-area button img {
+   .input-area button#send-button img {
       height: 16px;
       width: 16px;
+   }
+   .api-key-area {
+       flex-wrap: wrap; /* السماح بالالتفاف إذا ضاق المكان */
+   }
+   .api-key-area input#api-key {
+       margin-bottom: 5px; /* مسافة إذا التف */
+       width: calc(100% - 70px); /* تعديل العرض */
    }
 
   .new-chat-button,
   .download-app-button {
-    width: 100%; /* جعل الأزرار بعرض كامل */
+    width: 100%;
     padding: 12px;
     font-size: 1rem;
   }
