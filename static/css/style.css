@@ -371,4 +371,22 @@ h1 {
     margin-top: 3px;
     font-style: italic;
     font-size: 0.65em;
-}                          
+}        .download-app-button {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #5b3a94;
+    color: white;
+    border-radius: 20px;
+    text-decoration: none;
+    font-size: 0.85em;
+    transition: background-color 0.3s ease;
+}
+
+.download-app-button i {
+    margin-left: 6px;
+}
+
+.download-app-button:hover {
+    background-color: #4a2d7a;
+}                  
