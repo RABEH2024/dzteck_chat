@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DzTeck - محادثة ذكية مع النماذج العالمية</title>
-    <meta name="description" content="DzTeck - واجهة محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter">
-    
-    <!-- Font Awesome for icons -->
+    <title>DzTeck.ai - منصة المحادثة الذكية</title>
+    <meta name="description" content="DzTeck.ai - محادثة ذكية تعمل بالذكاء الاصطناعي بواسطة OpenRouter">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <div class="chat-container">
         <header class="chat-header">
-            <div class="logo">
+            <div class="header-left">
+                <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
+            </div>
+            <div class="header-right">
                 <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img">
-                <h1>DzTeck شات</h1>
+                <span class="brand-name">DzTeck.ai</span>
             </div>
         </header>
 
         {% if chats and chats|length > 0 %}
-        <!-- Chat List -->
         <div class="chat-list">
             {% for chat in chats %}
             <a href="{{ url_for('view_chat', chat_id=chat.id) }}" class="chat-item">
@@ -33,42 +32,34 @@
         </div>
         {% endif %}
 
-        <!-- New Chat Form -->
         <form action="{{ url_for('create_chat') }}" method="post">
             <div class="model-selector">
                 <label for="model-select">اختر النموذج:</label>
                 <select id="model-select" name="model">
-                    <!-- نماذج مجانية -->
                     <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (مجاني)</option>
                     <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
                     <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
                     <option value="openchat/openchat-7b">OpenChat 7B (مجاني)</option>
                     <option value="gryphe/mythomist-7b">MythoMist 7B (مجاني)</option>
                     <option value="01-ai/yi-1.5-9b-chat">Yi 1.5 9B Chat (مجاني)</option>
-                    <!-- نماذج مدفوعة -->
                     <option value="anthropic/claude-3-haiku">Claude 3 Haiku</option>
                     <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
                     <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
                 </select>
             </div>
-            <button type="submit" class="new-chat-button">إنشاء محادثة جديدة</button>
+            <button type="submit" class="new-chat-button">بدء محادثة جديدة</button>
         </form>
 
-        <!-- Info & App Download -->
         <div class="info-banner">
-            <p class="info-text">أهلاً بك في DzTeck شات! يمكنك التحدث مع عدة نماذج ذكاء اصطناعي عبر واجهتنا العربية. اختر نموذجًا وابدأ محادثة جديدة.</p>
-            
-            <!-- زر تحميل التطبيق -->
-            <a href="https://storage.googleapis.com/appilder/app/9844f0a4a01716fdcd6092c2641291f6/3eec5958334e4e211093c41bc644f69d.apk?GoogleAccessId=desktopapi%40appilder-com.iam.gserviceaccount.com&Expires=1745696277&Signature=Z0zeEdl9cPAakOwms1h%2FlSVS3KSIwh0GAUwyG%2Fhjo2vnSRNn%2Br0MRMJvz081M0%2BLVNX8O%2FqaVGnu4vYo0A3o6n%2FGKyBywNFtLvYyUt6FiC7B6W1UQ%2BP3kwoQXicfGEwi8ABYwuODzg7XMcjlLvmnw9S7HeltHL%2F3XJz0smZrOlppjJwhVwiOg2A%2BYpSczHJkVhaul5UdaeUzSRlQyuC1%2Boql1W5Oh%2FP0%2FjWp5a37bCWn%2BRsTuOzLs3VJJa0V9ETJAnA4kAQI%2FWmi2fXzWZSb3PQEExPxqaokldkzUBRcwWdHNMHT8w0%2FxbFKydwYw5XQZlPBsLdfiD7kScuNuvNTeQ%3D%3D" 
-               class="new-chat-button" style="background-color: #2e8b57; margin-top: 10px;" download>
+            <p class="info-text">مرحبًا بك في DzTeck.ai! تحدث مع نماذج ذكاء اصطناعي متطورة من خلال واجهتنا العربية.</p>
+            <a href="#" class="new-chat-button download-app" download>
                 <i class="fa fa-download"></i> تحميل تطبيق DzTeck
             </a>
         </div>
 
-        <!-- Footer -->
         <footer class="chat-footer">
-            <p>DzTeck &copy; 2025</p>
-            <p class="footer-tagline">محادثة ذكية اصطناعية متقدمة باللغة العربية</p>
+            <p>© 2025 DzTeck.ai</p>
+            <p class="footer-tagline">محادثة ذكية وعصرية بلغتك العربية</p>
         </footer>
     </div>
 </body>
