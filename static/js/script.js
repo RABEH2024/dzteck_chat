@@ -255,3 +255,74 @@ async function sendMessage() {
         }
     }
 }
+// --- أضف هذا الكود في نهاية ملف script.js ---
+
+document.addEventListener('DOMContentLoaded', () => {
+    // ... (الكود الموجود في DOMContentLoaded، مثل تحميل API key والتركيز)
+
+    const chatBoxForDelete = document.getElementById('chat-box'); // أعد تعريفه هنا للتأكد
+    const currentChatId = document.getElementById('chat-id')?.value; // احصل على ID المحادثة
+
+    if (chatBoxForDelete && currentChatId) {
+        chatBoxForDelete.addEventListener('click', function(event) {
+            const deleteButton = event.target.closest('.delete-msg-btn');
+
+            if (deleteButton) {
+                const messageId = deleteButton.dataset.messageId;
+                const messageElement = deleteButton.closest('.message');
+
+                if (messageId && messageId !== 'unknown' && messageElement) {
+                    if (confirm('هل أنت متأكد أنك تريد حذف هذه الرسالة؟')) {
+                        console.log(`Requesting delete for chat ${currentChatId}, message ${messageId}`);
+
+                        // !!! تأكد من أن هذا المسار صحيح في تطبيق Flask/Django لديك !!!
+                        fetch(`/delete_message/${currentChatId}/${messageId}`, {
+                            method: 'DELETE', // أو 'POST'
+                            headers: {
+                                'Content-Type': 'application/json',
+                                // أضف أي headers أخرى مطلوبة (مثل CSRF token)
+                            },
+                        })
+                        .then(response => {
+                            if (!response.ok) {
+                                return response.text().then(text => { throw new Error(`فشل حذف الرسالة: ${response.status} ${text}`); });
+                            }
+                            // افترض النجاح إذا كانت الاستجابة OK
+                            return { success: true };
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                console.log('Message deleted successfully on server.');
+                                messageElement.remove();
+                                // يمكنك إظهار إشعار نجاح صغير
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error deleting message:', error);
+                            alert(`حدث خطأ أثناء حذف الرسالة: ${error.message}`);
+                        });
+                    }
+                } else {
+                    console.warn('Could not find message ID or message element for deletion.');
+                }
+            }
+        });
+    } else {
+        // هذا سيظهر إذا لم يتم العثور على chat-box أو chat-id، مفيد للتشخيص
+        console.warn('Chat box or chat ID not found for delete listener setup.');
+    }
+
+     // --- تأكد من أن كود التمرير لأسفل موجود ---
+    function scrollToBottom() {
+        const box = document.getElementById('chat-box');
+         if (box) {
+            box.scrollTop = box.scrollHeight;
+         }
+    }
+    // التمرير لأسفل عند التحميل الأولي (إذا لم يكن موجودًا بالفعل في DOMContentLoaded)
+    scrollToBottom();
+
+
+}); // نهاية DOMContentLoaded الإضافي أو دمجه مع الموجود
+
+// --- باقي الكود في script.js (sendMessage, addMessage etc.) يبقى كما هو ---
