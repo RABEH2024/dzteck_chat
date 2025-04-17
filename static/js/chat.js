@@ -8,7 +8,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
      <!-- <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}"> -->
-</head>
+</head>// وضع صيانة: تعطيل كل التفاعل
+document.addEventListener('DOMContentLoaded', () => {
+  alert("هذه الصفحة في وضع الصيانة حالياً. لا يمكن التفاعل مع النموذج.");
+  return; // منع تنفيذ باقي الكود
+});
 <body>
     <div class="chat-container">
         <!-- الهيدر الأصلي لصفحة المحادثة -->
