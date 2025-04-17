@@ -3,41 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat DZ - محادثاتك الذكية</title> <!-- تعديل العنوان -->
+    <title>Chat DZ - محادثاتك الذكية</title>
     <meta name="description" content="Chat DZ - تحدث مع أحدث نماذج الذكاء الاصطناعي باللغة العربية">
-    <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="style.css"> <!-- استخدام اسم الملف الصحيح -->
+    <link rel="stylesheet" href="style.css">
     <!-- <link rel="icon" href="img/favicon.ico"> -->
 </head>
-<body class="index-page"> <!-- لتطبيق أنماط خاصة -->
-    <div class="chat-container index-container"> <!-- تمييز الحاوية -->
+<body class="index-page">
+    <div class="chat-container index-container">
         <header class="chat-header index-header">
             <div class="header-left">
                 <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
             </div>
             <div class="header-right">
-                 <!-- يمكنك إضافة لوجو هنا إذا أردت -->
-                 <!-- <img src="img/logo.svg" alt="Chat DZ Logo" class="logo-img"> -->
                 <span class="brand-name">Chat DZ</span>
             </div>
         </header>
 
         <main class="main-content">
-            <!-- قسم إدخال المفتاح -->
-            <section class="api-key-section-index">
-                 <h2><i class="fas fa-key"></i> إعدادات الاتصال</h2>
-                <div class="api-key-input-container">
-                    <label for="api-key-index">مفتاح OpenRouter API:</label>
-                    <div class="api-key-wrapper">
-                         <input type="password" id="api-key-index" placeholder="أدخل مفتاح API هنا (يُحفظ محليًا)">
-                         <button id="toggle-api-key-index" title="إظهار/إخفاء المفتاح"><i class="fas fa-eye"></i></button>
-                    </div>
-                    <small>مطلوب لبدء محادثات جديدة والتفاعل مع النماذج.</small>
-                </div>
-            </section>
-
-             <!-- قسم بدء محادثة جديدة -->
+            <!-- قسم بدء محادثة جديدة -->
             <section class="new-chat-section">
                 <h2><i class="fas fa-plus-circle"></i> بدء محادثة جديدة</h2>
                  <div class="model-selector">
@@ -49,7 +33,6 @@
                         <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo (شائع)</option>
                         <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B (الأحدث)</option>
                          <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
-                         <!-- أضف نماذج أخرى حسب الحاجة -->
                     </select>
                 </div>
                 <button id="start-new-chat-button" class="new-chat-button">
@@ -62,25 +45,21 @@
                 <h2><i class="fas fa-list-ul"></i> المحادثات المحفوظة</h2>
                 <div class="chat-list" id="conversation-list-index">
                     <!-- سيتم ملء قائمة المحادثات هنا بواسطة script.js -->
-                     <!-- مثال لعنصر قائمة يضاف بواسطة JS:
-                    <div class="chat-item" data-chat-id="17151904233">
-                        <a href="chat.html?id=17151904233" class="chat-link" title="...">
-                            <span class="chat-title">عنوان تجريبي</span>
-                            <span class="chat-date"><i class="far fa-clock"></i> 2024/05/08</span>
+                    <!-- مثال لعنصر قائمة:
+                    <div class="chat-item" data-chat-id="12345">
+                        <a href="chat.html?id=12345" class="chat-link">
+                            <span class="chat-title">عنوان المحادثة</span>
+                            <span class="chat-date"><i class="far fa-clock"></i> التاريخ</span>
                         </a>
-                        <button class="delete-list-item-btn" title="حذف هذه المحادثة">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
+                        <button class="delete-list-item-btn" title="حذف"><i class="fas fa-trash-alt"></i></button>
                     </div>
                     -->
                 </div>
                 <p id="no-conversations-message" class="no-chats-message" style="display: none;">ابدأ محادثة جديدة لاستكشاف إمكانيات الذكاء الاصطناعي!</p>
             </section>
 
-            <!-- Info Banner (اختياري) -->
             <div class="info-banner">
                 <p><i class="fas fa-info-circle"></i> اكتشف قوة الذكاء الاصطناعي بلغتك الأم. Chat DZ يربطك بأفضل النماذج العالمية.</p>
-                <!-- <a href="#" id="download-apk-btn" class="download-app-button"><i class="fas fa-mobile-alt"></i> تحميل التطبيق</a> -->
             </div>
         </main>
 
@@ -90,6 +69,6 @@
         </footer>
     </div>
 
-    <script src="script.js"></script> <!-- استخدام اسم الملف الصحيح -->
+    <script src="script.js"></script>
 </body>
 </html>
