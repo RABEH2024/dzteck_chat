@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <title>{{ chat.title }} - Yasmin GPT v1</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ chat.title | default('محادثة') }} - DzTeck.ai</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
   <div class="chat-container">
-    <header class="chat-header">
-      <h1>{{ chat.title }}</h1>
-      <div class="chat-controls">
-        <button id="toggle-dark-mode"><i class="fas fa-moon"></i></button>
-        <button id="export-chat-btn"><i class="fas fa-download"></i></button>
+    <header class="chat-header chat-page-header">
+      <div class="logo-area">
+        <a href="{{ url_for('index') }}" class="back-button"><i class="fas fa-arrow-right"></i></a>
+        <img src="{{ url_for('static', filename='img/logo.svg') }}" class="logo-img" alt="DzTeck Logo">
+      </div>
+      <div class="header-content">
+        <h1 class="chat-title-header">{{ chat.title | default('محادثة') }}</h1>
+        <span class="model-info-header">النموذج: {{ chat.model | default('غير محدد') }}</span>
+      </div>
+      <div class="header-actions">
+        <button id="delete-chat-btn"><i class="fas fa-trash-alt"></i> حذف</button>
       </div>
     </header>
 
-    <input type="search" id="search-chat" placeholder="ابحث في المحادثة...">
-
     <div class="chat-box" id="chat-box">
       {% for message in messages %}
-      <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}">
-        {{ message.content }}
+      <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}" data-message-id="{{ message.id }}">
+        <div class="message-icon">
+          <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}">
+        </div>
+        <div class="message-content">
+          {{ message.content }}
+          {% if message.role == 'user' %}
+          <button class="delete-msg-btn" title="حذف الرسالة"><i class="fas fa-times"></i></button>
+          {% endif %}
+        </div>
       </div>
       {% endfor %}
     </div>
 
-    <div class="input-section sliders">
-      <label>درجة الإبداع: <input type="range" id="temperature" min="0" max="1" step="0.1" value="0.7" /></label>
-      <label>Max Tokens: <input type="number" id="max-tokens" value="1024" min="256" max="2048" /></label>
+    <div class="input-section">
+      <div class="input-area">
+        <button id="voice-input-btn" class="action-button"><i class="fas fa-microphone"></i></button>
+        <textarea id="user-input" placeholder="اكتب رسالتك أو استخدم الميكروفون..." rows="1"></textarea>
+        <button id="send-button" class="action-button"><i class="fas fa-paper-plane"></i></button>
+      </div>
     </div>
 
-    <div class="input-area">
-      <textarea id="user-input" placeholder="اكتب رسالتك..."></textarea>
-      <button id="send-button"><i class="fas fa-paper-plane"></i></button>
-    </div>
+    <footer class="chat-footer">
+      <p>© 2025 DzTeck.ai - Developed by Rahmani</p>
+      <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية.</p>
+    </footer>
 
     <input type="hidden" id="chat-id" value="{{ chat.id }}">
-    <input type="hidden" id="model-name" value="{{ chat.model }}">
-    <input type="text" id="api-key" placeholder="OpenRouter API Key">
+    <input type="text" id="api-key" placeholder="API Key">
+    <button id="toggle-api-key"><i class="fas fa-eye"></i></button>
   </div>
 
-  <script src="/static/js/chat.js"></script>
+  <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
 </body>
 </html>
