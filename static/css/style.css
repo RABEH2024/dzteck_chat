@@ -45,7 +45,37 @@ body {
     line-height: 1.6;
 }
 
-a {
+a {<style>
+  .disabled-overlay {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 999;
+  }
+  .maintenance-banner {
+    background: #ffc107;
+    color: #000;
+    text-align: center;
+    padding: 12px;
+    font-weight: bold;
+    font-size: 1.1em;
+  }
+  .rahmani-rotating {
+    position: fixed;
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    font-size: 3em;
+    color: #00ffc3;
+    font-weight: bold;
+    animation: spin 5s linear infinite;
+    z-index: 1000;
+  }
+  @keyframes spin {
+    from { transform: translate(50%, -50%) rotate(0deg); }
+    to { transform: translate(50%, -50%) rotate(360deg); }
+  }
+</style>
     text-decoration: none;
     color: var(--link-color);
     transition: color 0.2s ease;
