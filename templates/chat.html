@@ -3,94 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    {# ** الخادم يجب أن يمرر chat.id, chat.title, chat.model ** #}
-    <title>{{ chat.title | default('محادثة') }} - DzTeck.ai</title>
-    <meta name="description" content="محادثة ذكية مع {{ chat.model | default('AI') }} على DzTeck.ai">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-     <!-- <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}"> -->
+    <title>Chat DZ - محادثة</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- مكتبات خارجية -->
+    <script src="lib/marked.min.js"></script> <!-- تأكد من وجود الملف -->
+    <!-- <script src="lib/jspdf.umd.min.js"></script> --> <!-- لتصدير PDF -->
 </head>
-<body>
-    <div class="chat-container">
-        <!-- الهيدر الأصلي لصفحة المحادثة -->
-        <header class="chat-header chat-page-header">
-            <div class="logo-area">
-                <a href="{{ url_for('index') }}" class="back-button" title="العودة لقائمة المحادثات">
-                    <i class="fas fa-arrow-right"></i>
-                </a>
-                 <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img" onerror="this.style.display='none'">
-            </div>
-            <div class="header-content">
-                <h1 class="chat-title-header" title="{{ chat.title | default('محادثة') }}">{{ chat.title | default('محادثة') }}</h1>
-                <span class="model-info-header">النموذج: {{ chat.model | default('غير محدد') }}</span>
-            </div>
-            <div class="header-actions">
-                <button id="delete-chat-btn" title="حذف هذه المحادثة بالكامل">
-                    <i class="fas fa-trash-alt"></i>
-                    <span class="delete-text">حذف</span> <!-- نص يظهر في الشاشات الأكبر -->
-                </button>
-            </div>
-        </header>
+<body class="chat-page"> <!-- تمييز الصفحة للـ CSS -->
 
-        <!-- منطقة عرض الرسائل -->
-        <div class="chat-box" id="chat-box">
-            {# ** عرض الرسائل من الخادم - كل message يجب أن تحتوي على id, role, content ** #}
-            {% for message in messages %}
-            <div class="message {{ 'user-message' if message.role == 'user' else 'bot-message' }}" data-message-id="{{ message.id }}"> {# *** ID ضروري من الخادم *** #}
-                <div class="message-icon">
-                     <img src="{{ url_for('static', filename='img/user-icon.svg' if message.role == 'user' else 'img/bot-icon.svg') }}" alt="{{ message.role }}" onerror="this.style.display='none'">
-                </div>
-                <div class="message-content">
-                    {# استخدم safe فقط إذا كنت متأكدًا تمامًا من أن المحتوى آمن #}
-                    {{ message.content }} {# الأفضل عدم استخدام safe هنا افتراضيًا #}
-
-                    {# زر حذف الرسالة الفردية للمستخدم (يجب أن يضيفه الخادم) #}
-                    {% if message.role == 'user' %}
-                    <button class="delete-msg-btn" title="حذف الرسالة">
-                        <i class="fas fa-times"></i> {# أيقونة X أصغر للحذف الفردي #}
-                    </button>
-                    {% endif %}
-
-                     {# زر تشغيل الصوت لرسائل البوت #}
-                    {% if message.role != 'user' %}
-                    <button class="speak-btn" title="تشغيل الصوت">
-                        <i class="fas fa-volume-up"></i>
-                    </button>
-                    {% endif %}
-                </div>
+    <div class="app-container">
+        <!-- القائمة الجانبية للمحادثات -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                 <a href="index.html" class="back-to-index-button" title="العودة للقائمة الرئيسية">☰ العودة</a>
+                 <button id="new-chat-button-sidebar" class="sidebar-button" title="بدء محادثة جديدة">+</button>
             </div>
-            {% endfor %}
-            {# الرسائل الجديدة والإشعارات ستضاف هنا بواسطة JS #}
+            <h2>المحادثات</h2>
+            <ul id="conversation-list-chat">
+                <!-- سيتم ملؤها بواسطة chat.js -->
+                <!-- مثال لعنصر قائمة تفاعلي:
+                <li class="active" data-id="12345">
+                    <span class="conv-title">عنوان المحادثة</span>
+                    <div class="conv-actions">
+                        <button class="rename-conv-button" title="إعادة تسمية">✏️</button>
+                        <button class="delete-conv-button" title="حذف">🗑️</button>
+                    </div>
+                </li>
+                -->
+            </ul>
+            <div class="sidebar-footer">
+                 <button id="dark-mode-toggle" title="الوضع الليلي/النهاري">🌙</button>
+                 <!-- يمكن إضافة عناصر أخرى هنا -->
+            </div>
         </div>
 
-        <!-- منطقة الإدخال (Textarea + Voice + Send) -->
-        <div class="input-section">
+        <!-- حاوية الشات الرئيسية -->
+        <div class="chat-wrapper">
+            <header class="chat-header">
+                <h1 id="chat-title">تحميل المحادثة...</h1>
+                <div class="header-controls">
+                     <button id="export-chat-button" title="تصدير المحادثة">تصدير 📄</button>
+                     <!-- النموذج يعرض الآن فقط، التغيير يتم في الإعدادات -->
+                     <span class="model-display">النموذج: <strong id="current-model-display">...</strong></span>
+                </div>
+            </header>
+
+             <!-- منطقة إعدادات النموذج والبحث -->
+             <div class="settings-area">
+                 <div class="setting-item model-setting">
+                    <label for="model-select-chat">تغيير النموذج:</label>
+                    <select id="model-select-chat">
+                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B v0.2</option>
+                        <option value="google/gemma-7b-it">Google Gemma 7B</option>
+                        <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2</option>
+                    </select>
+                 </div>
+                 <div class="setting-item">
+                     <label for="temperature-input">الحرارة:</label>
+                     <input type="range" id="temperature-input" min="0" max="2" step="0.1" value="0.7">
+                     <span id="temperature-value">0.7</span>
+                 </div>
+                 <div class="setting-item">
+                     <label for="max-tokens-input">أقصى توكنز:</label>
+                     <input type="number" id="max-tokens-input" min="10" max="4096" value="512">
+                 </div>
+                  <div class="setting-item search-setting">
+                      <label for="search-input">بحث:</label>
+                      <input type="search" id="search-input" placeholder="ابحث في الرسائل...">
+                  </div>
+             </div>
+
+            <div class="chat-box" id="chat-box">
+                <!-- رسائل الشات ستظهر هنا -->
+            </div>
+
             <div class="input-area">
-                 {# زر الإدخال الصوتي #}
-                 <button id="voice-input-btn" class="action-button" title="الإدخال الصوتي">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                {# حقل إدخال النص #}
-                <textarea id="user-input" placeholder="اكتب رسالتك أو استخدم الميكروفون..." rows="1"></textarea>
-                {# زر الإرسال #}
-                <button id="send-button" class="action-button" title="إرسال">
-                    <i class="fas fa-paper-plane"></i>
-                </button>
+                <textarea id="user-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                <button id="send-button" title="إرسال">➤</button>
             </div>
         </div>
-
-        <!-- الفوتر الأصلي -->
-         <footer class="chat-footer">
-            <p>© {{ now.year if now else '2024' }} DzTeck.ai - Developed by Rahmani</p>
-            <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية.</p>
-        </footer>
-
-        <!-- Hidden Fields -->
-        <input type="hidden" id="chat-id" value="{{ chat.id }}">
-         {# لا حاجة لـ model-name إذا كان الخادم يعالجه #}
     </div>
 
-    <!-- ربط ملف JavaScript المحدث -->
-    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+    <script src="chat.js"></script>
 </body>
 </html>
