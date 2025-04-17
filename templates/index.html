@@ -1,50 +1,74 @@
-<!-- index.html -->
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>DzTeck.ai - منصة المحادثة</title>
-  <link rel="stylesheet" href="static/css/style.css" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat DZ - محادثاتك الذكية</title>
+    <meta name="description" content="Chat DZ - تحدث مع أحدث نماذج الذكاء الاصطناعي باللغة العربية">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css">
+    <!-- <link rel="icon" href="img/favicon.ico"> -->
 </head>
-<body>
-  <div class="chat-container">
-    <header class="chat-header index-header">
-      <div class="header-left">
-        <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
-      </div>
-      <div class="header-right">
-        <img src="static/img/logo.svg" class="logo-img" alt="DzTeck" />
-        <span class="brand-name">DzTeck.ai</span>
-      </div>
-    </header>
+<body class="index-page">
+    <div class="chat-container index-container">
+        <header class="chat-header index-header">
+            <div class="header-left">
+                <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
+            </div>
+            <div class="header-right">
+                <span class="brand-name">Chat DZ</span>
+            </div>
+        </header>
 
-    <main class="main-content">
-      <h2><i class="fas fa-comments"></i> محادثاتك</h2>
-      <div class="chat-list" id="chat-list">
-        <!-- سيتم ملؤها من الخادم -->
-      </div>
+        <main class="main-content">
+            <!-- قسم بدء محادثة جديدة -->
+            <section class="new-chat-section">
+                <h2><i class="fas fa-plus-circle"></i> بدء محادثة جديدة</h2>
+                 <div class="model-selector">
+                    <label for="model-select-index">اختر نموذج الذكاء الاصطناعي للبدء:</label>
+                    <select id="model-select-index" name="model" required>
+                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (سريع ومجاني)</option>
+                        <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
+                        <option value="anthropic/claude-3-haiku-20240307">Claude 3 Haiku (متوازن)</option>
+                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo (شائع)</option>
+                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B (الأحدث)</option>
+                         <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
+                    </select>
+                </div>
+                <button id="start-new-chat-button" class="new-chat-button">
+                    <i class="fas fa-comments"></i> إنشاء وبدء الدردشة
+                </button>
+            </section>
 
-      <form action="/create_chat" method="post" class="new-chat-form">
-        <div class="model-selector">
-          <label for="model-select">اختر نموذج الذكاء الاصطناعي:</label>
-          <select id="model-select" name="model" required>
-            <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B</option>
-            <option value="google/gemma-7b-it">Gemma 7B</option>
-          </select>
-        </div>
-        <button type="submit" class="new-chat-button">
-          <i class="fas fa-plus-circle"></i> بدء محادثة جديدة
-        </button>
-      </form>
-    </main>
+            <!-- قسم المحادثات المحفوظة -->
+            <section class="conversations-list-section">
+                <h2><i class="fas fa-list-ul"></i> المحادثات المحفوظة</h2>
+                <div class="chat-list" id="conversation-list-index">
+                    <!-- سيتم ملء قائمة المحادثات هنا بواسطة script.js -->
+                    <!-- مثال لعنصر قائمة:
+                    <div class="chat-item" data-chat-id="12345">
+                        <a href="chat.html?id=12345" class="chat-link">
+                            <span class="chat-title">عنوان المحادثة</span>
+                            <span class="chat-date"><i class="far fa-clock"></i> التاريخ</span>
+                        </a>
+                        <button class="delete-list-item-btn" title="حذف"><i class="fas fa-trash-alt"></i></button>
+                    </div>
+                    -->
+                </div>
+                <p id="no-conversations-message" class="no-chats-message" style="display: none;">ابدأ محادثة جديدة لاستكشاف إمكانيات الذكاء الاصطناعي!</p>
+            </section>
 
-    <footer class="chat-footer">
-      <p>© 2025 DzTeck.ai - جميع الحقوق محفوظة</p>
-      <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية.</p>
-    </footer>
-  </div>
-  <script src="static/js/script.js"></script>
+            <div class="info-banner">
+                <p><i class="fas fa-info-circle"></i> اكتشف قوة الذكاء الاصطناعي بلغتك الأم. Chat DZ يربطك بأفضل النماذج العالمية.</p>
+            </div>
+        </main>
+
+        <footer class="chat-footer">
+            <p>© 2024 Chat DZ - Developed by Rahmani</p>
+            <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية بطلاقة.</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
 </body>
 </html>
