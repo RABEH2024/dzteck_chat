@@ -3,220 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DzTeck.ai - منصة المحادثة الذكية</title>
-    <meta name="description" content="DzTeck.ai - تحدث مع أحدث نماذج الذكاء الاصطناعي باللغة العربية">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <!-- Favicon (optional but recommended) -->
-    <!-- <link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}"> -->
-    {# لا حاجة لـ style مضمن هنا، تم نقله لـ style.css #}
+    <title>Chat DZ - محادثاتك</title>
+    <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="chat-container">
-        <!-- الهيدر الأصلي لصفحة الفهرس -->
-        <header class="chat-header index-header">
-            <div class="header-left">
-                <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
-            </div>
-            <div class="header-right">
-                 <img src="{{ url_for('static', filename='img/logo.svg') }}" alt="DzTeck Logo" class="logo-img" onerror="this.style.display='none'">
-                <span class="brand-name">DzTeck.ai</span>
-            </div>
+<body class="index-page">
+
+    <div class="index-container">
+        <header class="index-header">
+            <h1>Chat DZ</h1>
+            <p>محادثات الذكاء الاصطناعي الخاصة بك</p>
+             <div class="api-key-section">
+                 <label for="api-key-index">مفتاح OpenRouter API:</label>
+                 <input type="password" id="api-key-index" placeholder="أدخل مفتاح API هنا (يُحفظ محليًا)">
+                 <small>مطلوب لبدء محادثات جديدة والتفاعل.</small>
+             </div>
         </header>
 
-        <main class="main-content">
-            <h2><i class="fas fa-comments"></i> محادثاتك</h2>
-            {% if chats and chats|length > 0 %}
-            <div class="chat-list" id="chat-list">
-                {% for chat in chats %}
-                {# ** الخادم يجب أن يمرر chat.id, chat.title, chat.updated_at ** #}
-                <div class="chat-item" data-chat-id="{{ chat.id }}"> {# ** ID المحادثة هنا ** #}
-                    {# جعل الرابط يشغل المساحة المتاحة بجانب الزر #}
-                    <a href="{{ url_for('view_chat', chat_id=chat.id) }}" class="chat-link" title="فتح محادثة: {{ chat.title | default('محادثة بدون عنوان') }}">
-                        <span class="chat-title">{{ chat.title | default('محادثة بدون عنوان') }}</span>
-                        <span class="chat-date">
-                            <i class="far fa-clock"></i> {{ chat.updated_at.strftime('%Y/%m/%d') if chat.updated_at else '--' }}
-                        </span>
-                    </a>
-                    {# *** زر الحذف للمحادثة *** #}
-                    <button class="delete-list-item-btn" title="حذف هذه المحادثة">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </div>
-                {% endfor %}
-            </div>
-            {% else %}
-             <p class="no-chats-message">ابدأ محادثة جديدة لاستكشاف إمكانيات الذكاء الاصطناعي!</p>
-            {% endif %}
-
-            <!-- نموذج إنشاء محادثة جديدة -->
-            <form action="{{ url_for('create_chat') }}" method="post" class="new-chat-form">
-                 <div class="model-selector">
-                    <label for="model-select">اختر نموذج الذكاء الاصطناعي للبدء:</label>
-                    <select id="model-select" name="model" required>
-                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (سريع ومجاني)</option>
-                        <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
-                        <option value="anthropic/claude-3-haiku">Claude 3 Haiku (متوازن)</option>
-                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo (شائع)</option>
-                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B (الأحدث)</option>
-                         <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
+        <main class="index-main">
+            <section class="new-chat-section">
+                <h2>بدء محادثة جديدة</h2>
+                <div class="model-selector-index">
+                    <label for="model-select-index">اختر نموذجًا للبدء:</label>
+                    <select id="model-select-index">
+                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B Instruct v0.2</option>
+                        <option value="google/gemma-7b-it">Google Gemma 7B</option>
+                        <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 Mistral 7B</option>
+                         <!-- يمكن إضافة المزيد هنا أو تحميلها ديناميكيًا -->
                     </select>
                 </div>
-                <button type="submit" class="new-chat-button">
-                    <i class="fas fa-plus-circle"></i> بدء محادثة جديدة
-                </button>
-            </form>
+                <button id="start-new-chat-button">إنشاء وبدء الدردشة</button>
+            </section>
 
-            <div class="info-banner">
-                <p><i class="fas fa-info-circle"></i> اكتشف قوة الذكاء الاصطناعي بلغتك الأم. DzTeck.ai يربطك بأفضل النماذج العالمية.</p>
-                {# زر تحميل APK مع ID لربطه بالـ JS #}
-                <a href="#" id="download-apk-btn" class="download-app-button">
-                    <i class="fas fa-mobile-alt"></i> تحميل تطبيق DzTeck
-                </a>
-            </div>
+            <section class="conversations-list-section">
+                <h2>المحادثات المحفوظة</h2>
+                <ul id="conversation-list-index">
+                    <!-- سيتم ملء قائمة المحادثات هنا بواسطة script.js -->
+                    <!-- مثال لعنصر قائمة:
+                    <li>
+                        <a href="chat.html?id=12345">عنوان المحادثة</a>
+                        <button class="delete-conv-button" data-id="12345">🗑️</button>
+                    </li>
+                     -->
+                </ul>
+                <p id="no-conversations-message" style="display: none;">لا توجد محادثات محفوظة حتى الآن.</p>
+            </section>
         </main>
 
-        <!-- الفوتر الأصلي -->
-        <footer class="chat-footer">
-            <p>© {{ now.year if now else '2024' }} DzTeck.ai - All rights reserved by Rahmani</p>
-            <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية بطلاقة.</p>
+        <footer class="index-footer">
+            <p>© 2024 Chat DZ - تطبيق تجريبي</p>
         </footer>
     </div>
 
-    {# *** JavaScript المضمن في نهاية الصفحة لمعالجة الحذف وتحميل الـ APK *** #}
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const chatList = document.getElementById('chat-list');
-            const downloadApkButton = document.getElementById('download-apk-btn');
-
-            // --- معالجة حذف المحادثة من القائمة ---
-            if (chatList) {
-                chatList.addEventListener('click', function(event) {
-                    const deleteButton = event.target.closest('.delete-list-item-btn');
-
-                    if (deleteButton) {
-                        event.preventDefault();
-                        event.stopPropagation();
-
-                        const chatItem = deleteButton.closest('.chat-item');
-                        const chatId = chatItem?.dataset.chatId;
-                        const chatTitle = chatItem?.querySelector('.chat-title')?.textContent.trim() || 'هذه المحادثة';
-
-                        if (chatId && chatItem) {
-                            if (confirm(`هل أنت متأكد من حذف محادثة "${chatTitle}"؟ سيتم حذف جميع رسائلها بشكل دائم.`)) {
-                                console.log(`Requesting delete for chat ID: ${chatId}`);
-                                deleteButton.disabled = true;
-                                deleteButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
-
-                                // *** استدعاء الخادم لحذف المحادثة ***
-                                fetch(`/chat/${chatId}`, { // نفترض أن هذا هو المسار الصحيح
-                                    method: 'DELETE',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        // 'X-CSRFToken': getCookie('csrftoken') // أضف إذا لزم الأمر
-                                    }
-                                })
-                                .then(async response => { // جعلناها async للتعامل مع النص والـ JSON
-                                    // *** التصحيح لخطأ "stream already read" ***
-                                    // تحقق مما إذا كانت الاستجابة ناجحة (OK status codes: 200-299)
-                                    if (response.ok) {
-                                        // لا حاجة لقراءة الجسم إذا كان الحذف ناجحاً (خاصة لـ 204 No Content)
-                                        console.log(`Chat ${chatId} marked for deletion.`);
-                                        return { success: true }; // افترض النجاح
-                                    } else {
-                                        // إذا لم تكن ناجحة، حاول قراءة الخطأ من الخادم
-                                        let errorData = { error: `فشل الحذف: ${response.status}` }; // خطأ افتراضي
-                                        try {
-                                             // حاول قراءة JSON أولاً
-                                             errorData = await response.json();
-                                         } catch (e) {
-                                             // إذا فشل JSON، حاول قراءة النص
-                                             try {
-                                                 const errorText = await response.text();
-                                                 if(errorText) errorData.error = errorText; // استخدم النص إذا كان متاحًا
-                                             } catch (e2) { /* تجاهل الخطأ الثانوي */ }
-                                         }
-                                        // ألقِ خطأ بمعلومات الخطأ
-                                        throw new Error(errorData.error || `فشل الحذف: ${response.status}`);
-                                    }
-                                })
-                                .then(data => {
-                                    if (data.success) {
-                                        console.log(`Chat ${chatId} confirmed deleted by server.`);
-                                        // إزالة العنصر من الواجهة بسلاسة
-                                        chatItem.style.transition = 'opacity 0.3s ease, transform 0.3s ease, height 0.3s ease, margin 0.3s ease, padding 0.3s ease';
-                                        chatItem.style.opacity = '0';
-                                        chatItem.style.transform = 'scale(0.95)';
-                                        chatItem.style.height = '0';
-                                        chatItem.style.margin = '0';
-                                        chatItem.style.padding = '0'; // تصفير الـ padding أيضًا
-                                        setTimeout(() => {
-                                            chatItem.remove();
-                                            // التحقق مما إذا كانت القائمة فارغة الآن
-                                            const remainingItems = chatList.querySelectorAll('.chat-item');
-                                            if (remainingItems.length === 0) {
-                                                const noChatsMsg = document.querySelector('.no-chats-message') || document.createElement('p');
-                                                noChatsMsg.className = 'no-chats-message';
-                                                noChatsMsg.textContent = 'لا توجد محادثات سابقة.';
-                                                noChatsMsg.style.display = 'block'; // تأكد من ظهوره
-                                                // محاولة إدراجه قبل نموذج الإنشاء
-                                                 const form = document.querySelector('.new-chat-form');
-                                                 const chatListContainer = document.getElementById('chat-list'); // الحاوية الأصلية
-                                                if(form) { // الأفضل إدراجه قبل الفورم
-                                                    form.parentNode.insertBefore(noChatsMsg, form);
-                                                } else if(chatListContainer) { // أو إضافته داخل حاوية القائمة الفارغة
-                                                     chatListContainer.appendChild(noChatsMsg);
-                                                 }
-                                                 if(chatListContainer) chatListContainer.remove(); // إزالة الحاوية الفارغة
-
-                                            }
-                                        }, 350);
-                                    }
-                                    // لا يوجد else هنا لأن الخطأ يتم التعامل معه في .catch
-                                })
-                                .catch(error => {
-                                    console.error('Error deleting chat from list:', error);
-                                    alert(`حدث خطأ أثناء حذف المحادثة: ${error.message}`);
-                                    // إعادة تفعيل الزر عند الفشل
-                                    deleteButton.disabled = false;
-                                    deleteButton.innerHTML = '<i class="fas fa-trash-alt"></i>';
-                                });
-                            }
-                        } else {
-                             console.error('Could not find chat ID or chat item element for deletion.');
-                        }
-                    }
-                });
-            }
-
-            // --- معالجة زر تحميل APK ---
-            if (downloadApkButton) {
-                 // !!! استبدل هذا الرابط بالرابط الدائم والصحيح لملف الـ APK الخاص بك !!!
-                const apkDownloadUrl = "!!! ضع رابط التحميل الدائم لملف APK هنا !!!"; // <--- مهم جداً
-
-                if (apkDownloadUrl && apkDownloadUrl.startsWith('http')) { // تحقق بسيط من صحة الرابط
-                    downloadApkButton.href = apkDownloadUrl;
-                    downloadApkButton.target = "_blank"; // فتح في نافذة جديدة
-                    // downloadApkButton.download = "DzTeckApp.apk"; // اسم مقترح للملف
-                     console.log('APK download link set to:', apkDownloadUrl);
-                 } else {
-                     console.warn('APK download URL is invalid or not set. Download button disabled.');
-                     downloadApkButton.title = "رابط التحميل غير متوفر حالياً";
-                     downloadApkButton.style.opacity = "0.6";
-                     downloadApkButton.style.cursor = "not-allowed";
-                     downloadApkButton.href = "#"; // إزالة الرابط الفعلي
-                     downloadApkButton.onclick = (e) => {
-                         e.preventDefault();
-                         alert('عذراً، رابط تحميل التطبيق غير متوفر حالياً.');
-                     };
-                 }
-            }
-
-        });
-
-        // (اختياري) دالة جلب CSRF token إذا كنت تستخدم Django
-        // function getCookie(name) { ... }
-    </script>
-
+    <script src="script.js"></script>
 </body>
 </html>
