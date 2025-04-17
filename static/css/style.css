@@ -1,267 +1,92 @@
-/* --- Global Styles & Variables --- */
-:root {
-    --bg-color: #f4f4f8;
-    --text-color: #333;
-    --primary-color: #5b3a94; /* اللون الأساسي */
-    --primary-hover: #4a2d7a;
-    --secondary-color: #e9e9ef; /* لون ثانوي للخلفيات */
-    --accent-color: #7b5ac4; /* لون تمييز */
-    --border-color: #e0e0e0;
-    --shadow-color: rgba(0, 0, 0, 0.1);
-    --header-text: #ffffff;
-    --input-bg: #ffffff;
-    --input-border: #ccc;
-    --user-msg-bg: #dcf8c6;
-    --bot-msg-bg: #e5e5ea;
-    --link-color: #007bff;
-    --code-bg: #f0f0f0;
-    --highlight-bg: yellow;
-    --danger-color: #dc3545;
-    --danger-hover: #c82333;
+/* --- نسخ الكود الكامل من style (2).css المقدم سابقًا كأساس --- */
 
-    --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    --border-radius: 8px;
+/* --- الإضافات والتعديلات الضرورية --- */
+
+/* --- Index Page Styles (تحسينات لـ index.html الجديد) --- */
+.index-page .index-container {
+    /* يمكن إضافة padding أو max-width مختلف هنا إذا لزم الأمر */
 }
 
-body.dark-mode {
-    --bg-color: #1a1a2e;
-    --text-color: #e0e0e0;
-    --primary-color: #7b5ac4; /* أفتح في الداكن */
-    --primary-hover: #6a4aaf;
-    --secondary-color: #161625;
-    --accent-color: #9d7ae0;
-    --border-color: #444;
-    --shadow-color: rgba(255, 255, 255, 0.1);
-    --header-text: #e0e0e0;
-    --input-bg: #1f1f35;
-    --input-border: #444;
-    --user-msg-bg: #2a4d3e;
-    --bot-msg-bg: #3a3a5a;
-    --link-color: #87cefa;
-    --code-bg: #2d2d4d;
-    --highlight-bg: #ffc107;
-    --danger-color: #f85149;
-    --danger-hover: #e03a3f;
-}
-
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: var(--font-main);
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    line-height: 1.6;
-    transition: background-color 0.3s, color 0.3s;
-    direction: rtl;
-}
-
-button, input, select, textarea {
-    font-family: inherit;
-    font-size: 1rem;
-    border: 1px solid var(--input-border);
-    background-color: var(--input-bg);
-    color: var(--text-color);
-    border-radius: calc(var(--border-radius) / 2);
-    padding: 0.5em 0.8em;
-}
-button {
-    cursor: pointer;
-    background-color: var(--primary-color);
-    color: var(--header-text);
-    border: none;
-    transition: background-color 0.2s ease-in-out, opacity 0.2s;
-}
-button:hover {
-    background-color: var(--primary-hover);
-}
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-}
-textarea { resize: none; }
-a { color: var(--link-color); text-decoration: none; }
-a:hover { text-decoration: underline; }
-
-/* --- Styles for index.html (Scoped with .index-page) --- */
-.index-page {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start; /* محاذاة للأعلى */
-    padding: 30px;
-    min-height: 100vh;
-}
-
-.index-container {
-    background-color: var(--input-bg); /* استخدام لون خلفية أفتح قليلاً */
-    padding: 30px 40px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 15px var(--shadow-color);
-    width: 100%;
-    max-width: 800px;
-    text-align: center;
-}
-body.dark-mode .index-container {
-    background-color: var(--secondary-color); /* لون أغمق قليلاً في الوضع الداكن */
-}
-
-.index-header h1 {
-    color: var(--primary-color);
-    margin-bottom: 10px;
-}
-.index-header p {
-    margin-bottom: 20px;
-    color: var(--text-color);
-    opacity: 0.8;
-}
-.api-key-section {
-    margin-bottom: 30px;
-    padding: 15px;
-    background-color: rgba(0,0,0,0.03);
-    border-radius: var(--border-radius);
+.api-key-section-index {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: var(--light-color);
     border: 1px solid var(--border-color);
-    font-size: 0.9em;
+    border-radius: var(--border-radius);
+    text-align: right;
 }
-body.dark-mode .api-key-section {
-     background-color: rgba(255,255,255,0.05);
-}
-.api-key-section label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
-#api-key-index {
-    width: 70%;
-    margin-bottom: 5px;
-}
-.api-key-section small {
-    display: block;
-    opacity: 0.7;
-}
-
-
-.index-main > section {
-    margin-bottom: 30px;
-    padding-bottom: 30px;
-    border-bottom: 1px solid var(--border-color);
-}
-.index-main > section:last-child {
+.api-key-section-index h2 {
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    color: var(--primary-color);
     border-bottom: none;
-    padding-bottom: 0;
+    display: block;
 }
-
-.new-chat-section h2,
-.conversations-list-section h2 {
-    margin-bottom: 15px;
-    border-bottom: 2px solid var(--primary-color);
-    display: inline-block;
-    padding-bottom: 5px;
-}
-
-.model-selector-index {
-    margin-bottom: 15px;
-}
-.model-selector-index label {
+.api-key-section-index h2 i {
     margin-left: 8px;
 }
-#model-select-index {
-    min-width: 250px;
+.api-key-input-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 600;
 }
-
-#start-new-chat-button {
-    padding: 12px 25px;
-    font-size: 1.1em;
-    font-weight: bold;
-}
-
-#conversation-list-index {
-    list-style: none;
-    padding: 0;
-    margin-top: 15px;
-    max-height: 40vh; /* حد ارتفاع للقائمة */
-    overflow-y: auto;
-}
-#conversation-list-index li {
+.api-key-wrapper {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 12px 15px;
     margin-bottom: 8px;
-    background-color: var(--secondary-color);
-    border-radius: calc(var(--border-radius) / 2);
-    transition: background-color 0.2s;
-    border: 1px solid var(--border-color);
 }
-#conversation-list-index li:hover {
-    background-color: var(--accent-color); /* تغير اللون عند المرور */
+.api-key-wrapper input[type="password"],
+.api-key-wrapper input[type="text"] { /* Style for both password and text */
+    flex-grow: 1;
+    border: 1px solid #ced4da;
+    border-radius: var(--border-radius) 0 0 var(--border-radius); /* RTL: Rounded right */
+    padding: 10px 15px;
+    border-left: none; /* RTL: No left border */
 }
-body.dark-mode #conversation-list-index li {
-     background-color: var(--input-bg);
+.api-key-wrapper button#toggle-api-key-index {
+    padding: 10px 15px;
+    border: 1px solid #ced4da;
+    background-color: #e9ecef;
+    border-radius: 0 var(--border-radius) var(--border-radius) 0; /* RTL: Rounded left */
+    cursor: pointer;
+    color: var(--secondary-color);
+    font-size: 1.1em; /* حجم الأيقونة */
+    line-height: 1.4; /* لمحاذاة الأيقونة */
 }
-body.dark-mode #conversation-list-index li:hover {
-     background-color: var(--primary-hover);
+.api-key-wrapper button#toggle-api-key-index:hover {
+    background-color: #dde2e6;
 }
-
-
-#conversation-list-index a {
-    color: var(--text-color);
-    font-weight: 500;
-    flex-grow: 1; /* يأخذ المساحة المتاحة */
-    margin-left: 15px; /* مسافة بين العنوان والزر */
-    text-align: right; /* محاذاة العنوان لليمين */
-}
-#conversation-list-index li:hover a {
-    color: var(--header-text); /* تغيير لون النص عند المرور */
-}
-
-.delete-conv-button {
-    background: none;
-    border: none;
-    color: var(--danger-color);
-    font-size: 1.2em;
-    padding: 0 5px;
-    opacity: 0.7;
-    transition: opacity 0.2s, color 0.2s;
-}
-.delete-conv-button:hover {
-    color: var(--danger-hover);
-    opacity: 1;
+.api-key-input-container small {
+    font-size: 0.85em;
+    color: var(--secondary-color);
 }
 
-.index-footer {
-    margin-top: 30px;
-    font-size: 0.9em;
-    opacity: 0.7;
+/* إعادة تنسيق زر بدء المحادثة في Index */
+.new-chat-section .new-chat-button {
+     background-color: var(--primary-color); /* لون أزرق */
+     margin-top: 15px;
+}
+.new-chat-section .new-chat-button:hover {
+    background-color: darken(var(--primary-color), 10%);
 }
 
+/* --- Chat Page Styles (تحسينات لـ chat.html الجديد) --- */
 
-/* --- Styles for chat.html (Scoped with .chat-page) --- */
-.chat-page {
-    display: flex; /* يستخدم في JS لتحديد الصفحة */
-    height: 100vh;
-    overflow: hidden;
-}
-/* --- (إعادة استخدام وتوسيع الأنماط السابقة لـ .app-container, .sidebar, .chat-wrapper, .chat-header, .settings-area, .chat-box, .message, .input-area etc.) --- */
-
-/* --- تعديلات وتحسينات خاصة بـ chat.html --- */
-
-.app-container { /* تأكد من وجوده */
-    display: flex;
-    width: 100%;
-    height: 100%;
-}
-
+/* Sidebar */
 .sidebar {
-    width: 280px; /* يمكن زيادة العرض قليلاً */
-    background-color: var(--secondary-color);
+    width: 280px;
+    background-color: var(--secondary-color); /* استخدام لون أغمق قليلاً للقائمة */
     border-left: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    transition: background-color 0.3s;
-    flex-shrink: 0; /* منع الانكماش */
+    transition: background-color 0.3s, border-color 0.3s;
+    flex-shrink: 0;
+    color: var(--light-color); /* لون نص فاتح للقائمة */
+}
+body.dark-mode .sidebar {
+    background-color: #2a2f3b; /* لون أغمق للوضع الداكن */
+    border-left-color: #404552;
+    color: #e0e0e0;
 }
 
 .sidebar-header {
@@ -269,389 +94,587 @@ body.dark-mode #conversation-list-index li:hover {
     justify-content: space-between;
     align-items: center;
     padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    flex-shrink: 0;
 }
-.back-to-index-button {
-    color: var(--text-color);
-    font-size: 0.9em;
-    padding: 5px 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    opacity: 0.8;
+body.dark-mode .sidebar-header {
+    border-bottom-color: #404552;
 }
-.back-to-index-button:hover {
-    opacity: 1;
-    background-color: rgba(0,0,0,0.05);
-    text-decoration: none;
-}
-body.dark-mode .back-to-index-button {
-    color: var(--header-text);
-    border-color: var(--input-border);
-}
-body.dark-mode .back-to-index-button:hover {
-     background-color: rgba(255,255,255,0.1);
-}
-
-#new-chat-button-sidebar {
+.sidebar-header .back-to-index-button,
+.sidebar-header .sidebar-button {
+    color: var(--light-color);
+    padding: 6px 10px;
+    border-radius: 5px;
+    border: 1px solid transparent;
     background: none;
-    border: 1px solid var(--primary-color);
-    color: var(--primary-color);
-    font-size: 1.2em;
-    font-weight: bold;
-    width: 35px;
-    height: 35px;
-    border-radius: 50%;
-    padding: 0;
-    line-height: 33px; /* لمحاذاة الـ + */
+    font-size: 0.9em;
 }
-#new-chat-button-sidebar:hover {
-    background-color: var(--primary-color);
-    color: var(--header-text);
+.sidebar-header .back-to-index-button:hover,
+.sidebar-header .sidebar-button:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+.sidebar-header .sidebar-button {
+    font-size: 1.1em; /* أيقونة أكبر */
 }
 
-
-.sidebar h2 {
-    text-align: center;
-    padding: 15px 10px 10px;
-    margin: 0;
+.sidebar-title {
+    padding: 15px;
     font-size: 1.1em;
-    color: var(--primary-color);
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+    color: inherit; /* يرث لون النص من الأب */
+}
+.sidebar-title i {
+    margin-left: 8px;
 }
 
-#conversation-list-chat {
+.conversation-list-chat { /* Styles for the UL element */
     list-style: none;
-    padding: 0 10px; /* بادينج للقائمة */
+    padding: 0 10px;
     margin: 0;
     overflow-y: auto;
     flex-grow: 1;
 }
-
-#conversation-list-chat li {
+.conversation-list-chat li {
     display: flex;
     align-items: center;
-    padding: 8px 10px;
+    padding: 10px 12px;
     margin-bottom: 5px;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.2s;
-    position: relative; /* للسماح بوضع الأزرار */
+    position: relative;
     border: 1px solid transparent;
+    color: inherit; /* يرث لون النص */
 }
-
-#conversation-list-chat li:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+.conversation-list-chat li:hover {
+    background-color: rgba(255, 255, 255, 0.08);
 }
-body.dark-mode #conversation-list-chat li:hover {
-     background-color: rgba(255, 255, 255, 0.08);
-}
-
-#conversation-list-chat li.active {
-    background-color: var(--primary-color);
-    color: var(--header-text);
+.conversation-list-chat li.active {
+    background-color: rgba(255, 255, 255, 0.15); /* لون تمييز للعنصر النشط */
     font-weight: bold;
+    border-color: rgba(255, 255, 255, 0.2);
 }
-#conversation-list-chat li.active .conv-title {
-     color: var(--header-text); /* تأكد من لون النص */
+body.dark-mode .conversation-list-chat li:hover {
+     background-color: rgba(255, 255, 255, 0.1);
 }
-#conversation-list-chat li.active .conv-actions button {
-     color: var(--header-text); /* لون الأيقونات */
-     opacity: 0.8;
+body.dark-mode .conversation-list-chat li.active {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 
-.conv-title {
+.conv-title { /* Span holding the title */
     flex-grow: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    margin-left: 5px; /* مسافة بين العنوان والأزرار */
-    color: var(--text-color); /* اللون الافتراضي */
+    margin-left: 5px; /* مسافة للأيقونات */
+    color: inherit;
 }
-
 .conv-actions {
-    display: none; /* مخفية افتراضيًا */
-    margin-right: auto; /* لتدفع الأزرار لليسار في RTL */
+    display: none; /* مخفية */
+    margin-right: auto; /* دفع لليسار في RTL */
+    gap: 8px;
 }
-
-#conversation-list-chat li:hover .conv-actions,
-#conversation-list-chat li.active .conv-actions {
-    display: flex; /* تظهر عند المرور أو إذا كانت نشطة */
-    gap: 5px;
+.conversation-list-chat li:hover .conv-actions,
+.conversation-list-chat li.active .conv-actions {
+    display: flex; /* إظهار عند المرور أو النشاط */
 }
-
 .conv-actions button {
     background: none;
     border: none;
     padding: 2px;
-    font-size: 0.9em; /* تصغير الأيقونات قليلاً */
-    opacity: 0.6;
-    color: var(--text-color);
+    font-size: 0.9em;
+    opacity: 0.7;
+    color: inherit; /* يرث لون الأيقونات */
 }
 .conv-actions button:hover {
     opacity: 1;
 }
 .conv-actions .delete-conv-button {
-    color: var(--danger-color);
+    color: var(--danger-color); /* لون أحمر للحذف */
 }
-#conversation-list-chat li.active .conv-actions .delete-conv-button {
-    color: var(--danger-color); /* الحفاظ على لون الحذف */
-     opacity: 0.8;
+.conv-actions .delete-conv-button:hover {
+     color: darken(var(--danger-color), 15%);
 }
-#conversation-list-chat li.active .conv-actions .delete-conv-button:hover {
-    color: var(--danger-hover);
-    opacity: 1;
-}
-
 
 .sidebar-footer {
     padding: 15px;
-    border-top: 1px solid var(--border-color);
-    margin-top: auto; /* دفع للأسفل */
-    display: flex; /* لترتيب العناصر */
-    justify-content: center; /* توسيط زر الوضع الليلي */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
 }
-
+body.dark-mode .sidebar-footer {
+     border-top-color: #404552;
+}
 #dark-mode-toggle {
     background: none;
-    border: 1px solid var(--border-color);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 50%;
-    width: 35px;
-    height: 35px;
+    width: 36px;
+    height: 36px;
     font-size: 1.2em;
     cursor: pointer;
-    color: var(--text-color);
-    transition: background-color 0.3s, border-color 0.3s, transform 0.3s;
+    color: var(--light-color);
+    transition: all 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 #dark-mode-toggle:hover {
-    background-color: rgba(0, 0, 0, 0.1);
+    background-color: rgba(255, 255, 255, 0.1);
     transform: rotate(15deg);
 }
-body.dark-mode #dark-mode-toggle:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-}
 
-/* -- Chat Wrapper -- */
+/* Chat Wrapper & Header */
 .chat-wrapper {
     flex-grow: 1;
     display: flex;
     flex-direction: column;
     height: 100%;
-    background-color: var(--input-bg); /* استخدام لون أفتح للشات */
-    transition: background-color 0.3s;
+    background-color: var(--bg-color); /* استخدام لون الخلفية الرئيسي */
 }
-body.dark-mode .chat-wrapper {
-     background-color: var(--bg-color); /* استخدام لون الخلفية الرئيسي الأغمق */
-}
-
-
-.chat-header {
-    /* ... (استخدم الأنماط السابقة، قد تحتاج لتعديل الألوان لتناسب) ... */
-    background-color: var(--secondary-color); /* لون مختلف للهيدر داخل الشات */
-    color: var(--text-color);
-    padding: 10px 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+.chat-page-header { /* تعديل هيدر صفحة المحادثة */
+    background-color: #ffffff; /* خلفية بيضاء للهيدر */
     border-bottom: 1px solid var(--border-color);
-    flex-shrink: 0; /* منع الانكماش */
+    padding: 12px 20px;
+    color: var(--text-color);
 }
-body.dark-mode .chat-header {
-     background-color: var(--input-bg); /* أغمق قليلاً */
+body.dark-mode .chat-page-header {
+     background-color: var(--dark-color); /* لون أغمق للوضع الداكن */
+     border-bottom-color: #4a4a4a;
+     color: var(--light-color);
 }
-
-.chat-header h1 {
-    margin: 0;
+.chat-page-header .logo-area {
+     display: flex;
+     align-items: center;
+     gap: 10px;
+}
+.chat-page-header .chat-title-header { /* تعديل ليتناسب */
     font-size: 1.2em;
+    font-weight: 600;
+    color: inherit; /* يرث اللون */
+    margin: 0;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 50%; /* حد أقصى لعرض العنوان */
+    max-width: calc(100% - 50px); /* منع التجاوز */
 }
-
-.header-controls {
+.chat-page-header .header-content {
+    margin: 0 15px;
+    text-align: right;
+}
+.chat-page-header .model-info-header {
+    font-size: 0.8em;
+    opacity: 0.7;
+    color: inherit;
+}
+.chat-page-header .header-actions {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
+    margin-right: auto; /* دفع لليسار في RTL */
 }
-#export-chat-button {
-    background-color: var(--primary-color);
-    color: var(--header-text);
+.chat-page-header .header-action-btn {
+    background: none;
+    border: 1px solid var(--border-color);
     padding: 6px 12px;
+    border-radius: 5px;
     font-size: 0.9em;
-}
-.model-display {
-    font-size: 0.9em;
-    opacity: 0.8;
-}
-.model-display strong {
-    font-weight: 600;
-}
-
-
-.settings-area {
-    /* ... (استخدم الأنماط السابقة، قد تحتاج لتعديل الألوان) ... */
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px 20px; /* مسافات مختلفة أفقياً ورأسياً */
-    padding: 10px 15px;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--secondary-color); /* نفس لون الهيدر */
-    font-size: 0.85em;
-    align-items: center;
-    flex-shrink: 0; /* منع الانكماش */
-}
-body.dark-mode .settings-area {
-     background-color: var(--input-bg);
-}
-.setting-item {
+    color: var(--secondary-color);
     display: flex;
     align-items: center;
     gap: 5px;
 }
-.setting-item label { white-space: nowrap; }
-.setting-item input[type="range"] { width: 80px; cursor: pointer; }
-.setting-item input[type="number"] { width: 60px; padding: 4px; }
-#model-select-chat { padding: 4px 8px; font-size: 0.95em; }
-#search-input {
+.chat-page-header .header-action-btn:hover {
+    background-color: var(--light-color);
+    border-color: var(--secondary-color);
+    color: var(--dark-color);
+}
+.chat-page-header .header-action-btn.danger-btn {
+    color: var(--danger-color);
+    border-color: var(--danger-color);
+}
+.chat-page-header .header-action-btn.danger-btn:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+.chat-page-header .header-action-btn .action-text {
+    display: inline; /* إظهار النص افتراضيًا */
+}
+body.dark-mode .chat-page-header .header-action-btn {
+    border-color: #555;
+    color: #ccc;
+}
+body.dark-mode .chat-page-header .header-action-btn:hover {
+     background-color: #444;
+     border-color: #777;
+     color: #fff;
+}
+body.dark-mode .chat-page-header .header-action-btn.danger-btn {
+    color: #ff8080;
+    border-color: #ff8080;
+}
+body.dark-mode .chat-page-header .header-action-btn.danger-btn:hover {
+    background-color: #ff8080;
+    color: var(--dark-color);
+}
+
+/* Settings Area */
+.settings-area {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 20px;
+    padding: 12px 15px;
+    border-bottom: 1px solid var(--border-color);
+    background-color: var(--light-color);
+    font-size: 0.9em;
+    align-items: center;
+    flex-shrink: 0;
+}
+body.dark-mode .settings-area {
+    background-color: #30343a;
+    border-bottom-color: #4a4a4a;
+}
+
+.setting-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.setting-item label {
+    cursor: help; /* مؤشر مساعدة للتلميح */
+    color: var(--secondary-color);
+    font-size: 1.1em; /* حجم أيقونة الإعداد */
+}
+.setting-item input[type="range"] { width: 100px; cursor: pointer; }
+.setting-item input[type="number"] {
+    width: 65px;
     padding: 4px 8px;
-    border-radius: 15px;
-    width: 150px; /* عرض محدد للبحث */
+    border-radius: 4px;
+    text-align: center;
 }
-/* وضع البحث في أقصى اليسار في RTL */
+.setting-item select {
+    padding: 4px 8px;
+    border-radius: 4px;
+    max-width: 150px; /* حد لعرض القائمة */
+}
+.setting-item span { /* لـ temperature-value */
+    min-width: 25px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+body.dark-mode .setting-item span { color: var(--info-color); }
+
 .setting-item.search-setting {
-    margin-right: auto;
+    margin-right: auto; /* دفع لليسار في RTL */
+    flex-grow: 1; /* السماح له بأخذ مساحة */
+    max-width: 250px; /* حد أقصى للعرض */
+}
+.setting-item.search-setting label { font-size: 1em; } /* تصغير أيقونة البحث */
+.setting-item.search-setting input[type="search"] {
+    flex-grow: 1;
+    padding: 5px 10px;
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+}
+body.dark-mode .setting-item input,
+body.dark-mode .setting-item select {
+    background-color: #444;
+    border-color: #666;
+    color: #eee;
 }
 
-
+/* Chat Box & Messages */
 .chat-box {
-    /* ... (استخدم الأنماط السابقة) ... */
+    /* استخدام الأنماط السابقة مع تعديلات طفيفة */
     flex-grow: 1;
     padding: 20px;
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 18px; /* زيادة المسافة قليلاً */
 }
-
 .message {
-    /* ... (استخدم الأنماط السابقة مع تعديلات الألوان) ... */
     display: flex;
-    max-width: 85%;
+    align-items: flex-start; /* محاذاة للأعلى */
+    max-width: 80%;
     position: relative;
 }
+.message-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+    flex-shrink: 0;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-top: 5px; /* لضبط المحاذاة الرأسية */
+}
+.message.user-message .message-icon { order: 1; margin-right: 12px; }
+.message.bot-message .message-icon { order: 0; margin-left: 12px; }
+
 .message-content {
     padding: 12px 18px;
-    border-radius: 18px;
-    line-height: 1.5;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    line-height: 1.6;
     word-wrap: break-word;
-    flex-grow: 1;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+    position: relative; /* لتحديد موضع الأزرار الداخلية */
 }
-.user-message { align-self: flex-start; margin-left: auto; }
-.user-message .message-content {
-    background-color: var(--user-msg-bg);
+.message.user-message .message-content {
+    background: var(--primary-color); /* استخدام لون أساسي أغمق */
+    color: #fff;
+    border-bottom-left-radius: 0; /* زاوية حادة للمستخدم */
+}
+.message.bot-message .message-content {
+    background-color: #ffffff; /* خلفية بيضاء للبوت */
     color: var(--text-color);
-    border-bottom-left-radius: 5px;
+    border: 1px solid var(--border-color); /* حد خفيف */
+    border-bottom-right-radius: 0; /* زاوية حادة للبوت */
 }
-.bot-message { align-self: flex-end; margin-right: auto; }
-.bot-message .message-content {
-    background-color: var(--bot-msg-bg);
-    color: var(--text-color);
-    border-bottom-right-radius: 5px;
-    position: relative;
+body.dark-mode .message.bot-message .message-content {
+    background-color: #3a3f4c;
+    border-color: #4a4f5c;
+    color: #e0e0e0;
 }
-/* أزرار الإجراءات (نفس الأنماط السابقة) */
-.message-actions { /* ... */ }
-.action-button { /* ... */ }
-.bot-message:hover .message-actions { display: flex; }
+body.dark-mode .message.user-message .message-content {
+    background: var(--primary-color); /* يمكن تعديل لون المستخدم في الداكن */
+}
 
-/* دعم Markdown (نفس الأنماط السابقة) */
-.message-content pre { /* ... */ }
-.message-content code { /* ... */ }
-/* ... الخ ... */
-
-.input-area {
-    /* ... (استخدم الأنماط السابقة) ... */
+/* Message Actions (Copy, Regenerate, TTS) */
+.message-actions {
+    position: absolute;
+    bottom: -12px; /* تحت الرسالة */
+    left: 10px; /* يسار رسالة البوت في RTL */
+    display: none; /* مخفية */
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(3px);
+    border-radius: 15px;
+    padding: 3px 5px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    z-index: 10;
+    gap: 6px;
+}
+body.dark-mode .message-actions {
+    background-color: rgba(40, 40, 60, 0.85);
+}
+.message.bot-message:hover .message-actions {
     display: flex;
-    padding: 15px;
-    border-top: 1px solid var(--border-color);
-    background-color: var(--secondary-color); /* نفس لون الهيدر والإعدادات */
-    align-items: flex-end;
-    flex-shrink: 0; /* منع الانكماش */
 }
-body.dark-mode .input-area {
-    background-color: var(--input-bg);
+.action-button { /* الأزرار داخل message-actions */
+    background: none;
+    border: none;
+    font-size: 0.9em;
+    padding: 3px;
+    cursor: pointer;
+    color: var(--secondary-color);
+    opacity: 0.8;
+    transition: opacity 0.2s, color 0.2s;
 }
+.action-button:hover {
+    opacity: 1;
+    color: var(--primary-color);
+}
+body.dark-mode .action-button { color: #aaa; }
+body.dark-mode .action-button:hover { color: var(--info-color); }
 
-#user-input {
-    flex-grow: 1;
-    border-radius: 20px;
-    padding: 10px 15px;
-    margin-left: 10px;
-    max-height: 100px;
-    overflow-y: auto;
-    line-height: 1.4;
-    background-color: var(--input-bg); /* تأكد من لون الخلفية */
-    border: 1px solid var(--input-border);
-}
-
-#send-button {
-    /* ... (استخدم الأنماط السابقة) ... */
-    background-color: var(--primary-color);
-    color: var(--header-text);
+/* Delete Individual Message Button */
+.delete-msg-btn { /* زر الحذف X الأحمر للمستخدم */
+    position: absolute;
+    top: -8px;
+    left: -8px; /* يسار الرسالة في RTL */
+    background-color: var(--danger-color);
+    color: white;
     border-radius: 50%;
-    width: 45px;
-    height: 45px;
-    font-size: 1.5em;
-    line-height: 45px;
+    width: 20px;
+    height: 20px;
+    font-size: 10px;
+    line-height: 20px;
     text-align: center;
-    padding: 0;
-    transition: background-color 0.3s;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease-in-out;
+    z-index: 2;
+    border: 1px solid white; /* حد أبيض لتمييزه */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+.delete-msg-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 5px rgba(220, 53, 69, 0.5);
+}
+.message.user-message:hover .delete-msg-btn {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Input Area */
+.input-section {
+    padding: 15px 20px;
+    background-color: var(--light-color);
+    border-top: 1px solid var(--border-color);
     flex-shrink: 0;
+    box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
 }
-#send-button:hover { background-color: var(--primary-hover); }
+body.dark-mode .input-section {
+     background-color: #30343a;
+     border-top-color: #4a4a4a;
+}
+.input-area {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+.input-area textarea#user-input {
+    flex-grow: 1;
+    border: 1px solid var(--border-color);
+    border-radius: 20px; /* شكل بيضاوي */
+    padding: 10px 18px;
+    font-size: 1em;
+    resize: none;
+    min-height: 44px; /* ارتفاع أدنى */
+    max-height: 120px; /* ارتفاع أقصى قبل التمرير */
+    line-height: 1.5;
+    overflow-y: auto; /* تمرير عند تجاوز الحد */
+    background-color: #fff;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+.input-area textarea#user-input:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.15);
+}
+body.dark-mode .input-area textarea#user-input {
+    background-color: #444;
+    border-color: #666;
+    color: #eee;
+}
+body.dark-mode .input-area textarea#user-input:focus {
+     border-color: var(--info-color);
+     box-shadow: 0 0 0 3px rgba(23, 162, 184, 0.2);
+}
+
+.input-area .action-button.send-btn { /* زر الإرسال */
+    background-color: var(--primary-color);
+    color: white;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.3em;
+    flex-shrink: 0;
+    border: none;
+}
+.input-area .action-button.send-btn:hover {
+    background-color: darken(var(--primary-color), 10%);
+}
+.input-area .action-button.send-btn:disabled {
+    background-color: #a0c7ff; /* لون باهت عند التعطيل */
+    cursor: not-allowed;
+}
+body.dark-mode .input-area .action-button.send-btn {
+     background-color: var(--info-color);
+}
+body.dark-mode .input-area .action-button.send-btn:hover {
+    background-color: darken(var(--info-color), 10%);
+}
+body.dark-mode .input-area .action-button.send-btn:disabled {
+     background-color: #5c7a8a;
+}
 
 
-/* --- Responsive Design --- */
+/* Thinking Indicator (استخدام الأنماط السابقة) */
+.message.thinking .message-content { /*...*/ }
+.thinking-dots { /*...*/ }
+.thinking-dots span { /*...*/ }
+@keyframes thinking-blink { /*...*/ }
+
+/* Search Highlight */
+.highlight {
+    background-color: var(--warning-color);
+    color: #333 !important;
+    padding: 0 2px;
+    border-radius: 3px;
+    font-weight: bold;
+}
+body.dark-mode .highlight {
+    background-color: #ffdb58; /* أصفر أفتح للوضع الداكن */
+}
+
+
+/* Footer (استخدام الأنماط السابقة) */
+.chat-footer { /*...*/ }
+
+/* --- Responsive Adjustments --- */
 @media (max-width: 900px) {
+    .app-container { /* حاوية الشات */
+        flex-direction: column; /* القائمة فوق المحتوى */
+        height: auto;
+        min-height: 100vh;
+    }
     .sidebar {
-        width: 240px; /* تصغير القائمة الجانبية أكثر */
-    }
-    .settings-area {
-        gap: 8px 15px; /* تقليل المسافات */
-    }
-    .setting-item.search-setting {
-        margin-right: 0; /* إزالة الدفع التلقائي */
-        width: 100%; /* جعل البحث يأخذ عرض كامل */
-        margin-top: 5px;
-    }
-    #search-input {
         width: 100%;
+        height: auto; /* أو ارتفاع محدد إذا أردت */
+        border-left: none;
+        border-bottom: 1px solid var(--border-color);
+        /* يمكن إخفاء القائمة وجعلها تظهر بزر إذا أردت */
+        max-height: 40vh; /* حد أقصى لارتفاع القائمة في الوضع العمودي */
+        overflow-y: auto;
     }
+     body.dark-mode .sidebar { border-bottom-color: #404552; }
+
+    .chat-wrapper {
+        height: auto; /* يأخذ الارتفاع المتبقي */
+        flex-grow: 1;
+    }
+    .chat-page-header .action-text { display: none; } /* إخفاء نص الأزرار */
+    .header-action-btn { padding: 6px 8px; }
 }
 
-@media (max-width: 768px) {
-     .index-page { padding: 15px; }
-     .index-container { padding: 20px; }
-     #api-key-index { width: 90%; }
+@media (max-width: 600px) {
+    body { font-size: 15px; }
 
-    /* إخفاء القائمة الجانبية في chat.html وجعلها تظهر بزر (يتطلب JS إضافي) */
-    /* .sidebar { display: none; position: absolute; z-index: 100; } */
-    /* .chat-page.sidebar-open .sidebar { display: flex; } */
-
-    .chat-header h1 { max-width: 40%; }
     .settings-area {
-        flex-direction: column; /* إعدادات تحت بعضها */
-        align-items: stretch;
+        gap: 8px 10px;
+        padding: 10px;
+        font-size: 0.8em;
     }
-     .setting-item input[type="range"],
-     .setting-item input[type="number"],
-     #model-select-chat, #search-input {
-        width: 100%; /* جعل الحقول تأخذ العرض المتاح */
-    }
-    .setting-item.search-setting { margin-top: 10px; }
+    .setting-item { gap: 5px; }
+    .setting-item input[type="range"] { width: 70px; }
+    .setting-item input[type="number"] { width: 50px; }
+    .setting-item select { max-width: 100px; }
+    .setting-item.search-setting { max-width: 180px; margin-right: 0; }
+    .setting-item.search-setting input { padding: 4px 8px; }
 
-     .message { max-width: 95%; } /* رسائل أعرض قليلاً */
+    .chat-box { padding: 15px; gap: 15px; }
+    .message { max-width: 90%; }
+    .message-content { padding: 10px 15px; font-size: 0.95em; }
+    .message-icon { width: 32px; height: 32px; }
+
+    .input-section { padding: 10px 12px; }
+    .input-area textarea#user-input { min-height: 42px; }
+    .input-area .action-button.send-btn { width: 42px; height: 42px; }
+
+    .chat-footer { font-size: 0.8em; padding: 10px; }
+
+     /* Index Page adjustments */
+     .index-container { padding: 15px; }
+     .api-key-section-index { padding: 15px; }
+     .new-chat-form { padding: 15px; }
+     select#model-select { padding: 10px 12px; }
+     .new-chat-form .new-chat-button { padding: 10px 20px; font-size: 1em;}
+     .chat-item { padding: 10px; }
+     .chat-title { font-size: 0.9em; }
+     .chat-date { font-size: 0.7em; }
+     .delete-list-item-btn { font-size: 1em; left: 5px; }
 }
-
-/* يمكنك إضافة المزيد من نقاط التوقف والتحسينات */
