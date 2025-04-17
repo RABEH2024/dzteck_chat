@@ -3,72 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat DZ - محادثاتك الذكية</title>
-    <meta name="description" content="Chat DZ - تحدث مع أحدث نماذج الذكاء الاصطناعي باللغة العربية">
+    <title>Chat DZ - المحادثة</title> <!-- العنوان سيتم تحديثه بـ JS -->
+    <meta name="description" content="محادثة ذكية مع الذكاء الاصطناعي على Chat DZ">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <!-- <link rel="icon" href="img/favicon.ico"> -->
 </head>
-<body class="index-page">
-    <div class="chat-container index-container">
-        <header class="chat-header index-header">
-            <div class="header-left">
-                <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
-            </div>
-            <div class="header-right">
-                <span class="brand-name">Chat DZ</span>
-            </div>
-        </header>
+<body class="chat-page">
 
-        <main class="main-content">
-            <!-- قسم بدء محادثة جديدة -->
-            <section class="new-chat-section">
-                <h2><i class="fas fa-plus-circle"></i> بدء محادثة جديدة</h2>
-                 <div class="model-selector">
-                    <label for="model-select-index">اختر نموذج الذكاء الاصطناعي للبدء:</label>
-                    <select id="model-select-index" name="model" required>
-                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (سريع ومجاني)</option>
-                        <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
-                        <option value="anthropic/claude-3-haiku-20240307">Claude 3 Haiku (متوازن)</option>
-                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo (شائع)</option>
-                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B (الأحدث)</option>
-                         <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
+    <div class="app-container">
+        <!-- القائمة الجانبية -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                 <a href="index.html" class="back-to-index-button" title="العودة للقائمة الرئيسية">
+                     <i class="fas fa-arrow-right"></i> الرئيسية
+                 </a>
+                 <button id="new-chat-button-sidebar" class="sidebar-button" title="بدء محادثة جديدة">
+                     <i class="fas fa-plus"></i>
+                 </button>
+            </div>
+            <h2 class="sidebar-title"><i class="fas fa-history"></i> سجل المحادثات</h2>
+            <ul id="conversation-list-chat" class="conversation-list-chat"></ul>
+            <div class="sidebar-footer">
+                 <button id="dark-mode-toggle" title="الوضع الليلي/النهاري">
+                     <i class="fas fa-moon"></i>
+                 </button>
+            </div>
+        </div>
+
+        <!-- حاوية الشات الرئيسية -->
+        <div class="chat-wrapper">
+            <!-- هيدر المحادثة -->
+            <header class="chat-header chat-page-header">
+                 <div class="logo-area">
+                    <h1 id="chat-title" class="chat-title-header" title="عنوان المحادثة">تحميل...</h1>
+                 </div>
+                <div class="header-content">
+                    <span id="current-model-display" class="model-info-header">النموذج: ...</span>
+                </div>
+                <div class="header-actions">
+                    <button id="export-chat-button" class="header-action-btn" title="تصدير المحادثة كملف نصي">
+                        <i class="fas fa-file-export"></i>
+                        <span class="action-text">تصدير</span>
+                    </button>
+                     <button id="delete-chat-btn" class="header-action-btn danger-btn" title="حذف هذه المحادثة بالكامل">
+                        <i class="fas fa-trash-alt"></i>
+                        <span class="action-text">حذف</span>
+                    </button>
+                </div>
+            </header>
+
+             <!-- منطقة الإعدادات والبحث -->
+             <div class="settings-area">
+                 <div class="setting-item">
+                    <label for="model-select-chat" title="تغيير النموذج لهذه المحادثة"><i class="fas fa-brain"></i></label>
+                    <select id="model-select-chat" title="اختر النموذج">
+                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B</option>
+                        <option value="google/gemma-7b-it">Gemma 7B</option>
+                        <option value="anthropic/claude-3-haiku-20240307">Claude 3 Haiku</option>
+                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
+                        <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2</option>
                     </select>
-                </div>
-                <button id="start-new-chat-button" class="new-chat-button">
-                    <i class="fas fa-comments"></i> إنشاء وبدء الدردشة
-                </button>
-            </section>
+                 </div>
+                 <div class="setting-item">
+                     <label for="temperature-input" title="درجة الحرارة (الإبداع)"><i class="fas fa-thermometer-half"></i></label>
+                     <input type="range" id="temperature-input" min="0" max="2" step="0.1" value="0.7" title="0.7">
+                     <span id="temperature-value">0.7</span>
+                 </div>
+                 <div class="setting-item">
+                     <label for="max-tokens-input" title="أقصى طول للرد (توكنز)"><i class="fas fa-ruler-combined"></i></label>
+                     <input type="number" id="max-tokens-input" min="50" max="4096" value="512" title="512">
+                 </div>
+                  <div class="setting-item search-setting">
+                      <label for="search-input" title="بحث داخل الرسائل"><i class="fas fa-search"></i></label>
+                      <input type="search" id="search-input" placeholder="بحث في المحادثة...">
+                  </div>
+             </div>
 
-            <!-- قسم المحادثات المحفوظة -->
-            <section class="conversations-list-section">
-                <h2><i class="fas fa-list-ul"></i> المحادثات المحفوظة</h2>
-                <div class="chat-list" id="conversation-list-index">
-                    <!-- سيتم ملء قائمة المحادثات هنا بواسطة script.js -->
-                    <!-- مثال لعنصر قائمة:
-                    <div class="chat-item" data-chat-id="12345">
-                        <a href="chat.html?id=12345" class="chat-link">
-                            <span class="chat-title">عنوان المحادثة</span>
-                            <span class="chat-date"><i class="far fa-clock"></i> التاريخ</span>
-                        </a>
-                        <button class="delete-list-item-btn" title="حذف"><i class="fas fa-trash-alt"></i></button>
-                    </div>
-                    -->
-                </div>
-                <p id="no-conversations-message" class="no-chats-message" style="display: none;">ابدأ محادثة جديدة لاستكشاف إمكانيات الذكاء الاصطناعي!</p>
-            </section>
-
-            <div class="info-banner">
-                <p><i class="fas fa-info-circle"></i> اكتشف قوة الذكاء الاصطناعي بلغتك الأم. Chat DZ يربطك بأفضل النماذج العالمية.</p>
+            <!-- صندوق عرض الرسائل -->
+            <div class="chat-box" id="chat-box">
+                <!-- الرسائل ستعرض هنا بواسطة chat.js -->
             </div>
-        </main>
 
-        <footer class="chat-footer">
-            <p>© 2024 Chat DZ - Developed by Rahmani</p>
-            <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية بطلاقة.</p>
-        </footer>
-    </div>
+            <!-- منطقة الإدخال -->
+            <div class="input-section">
+                <div class="input-area">
+                    <textarea id="user-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
+                    <button id="send-button" class="action-button send-btn" title="إرسال">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </div>
+            </div>
 
-    <script src="script.js"></script>
+             <!-- الفوتر -->
+             <footer class="chat-footer">
+                 <p>© 2024 Chat DZ - Developed by Rahmani</p>
+            </footer>
+
+            <!-- Hidden Fields (No longer needed for API Key) -->
+            <input type="hidden" id="chat-id" value=""> <!-- سيتم ملء القيمة بواسطة JS -->
+        </div> <!-- نهاية chat-wrapper -->
+    </div> <!-- نهاية app-container -->
+
+    <script src="chat.js"></script>
 </body>
 </html>
