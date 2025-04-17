@@ -1,377 +1,445 @@
-// chat.js (for chat.html - Updated)
+// static/js/chat.js
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- عناصر الواجهة (Selectors) ---
-    const sidebar = document.querySelector('.sidebar');
-    const conversationListElement = document.getElementById('conversation-list-chat');
-    const newChatButtonSidebar = document.getElementById('new-chat-button-sidebar');
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const chatWrapper = document.querySelector('.chat-wrapper');
-    const chatTitleElement = document.getElementById('chat-title');
-    const currentModelDisplay = document.getElementById('current-model-display');
-    const exportChatButton = document.getElementById('export-chat-button');
-    const deleteChatButton = document.getElementById('delete-chat-btn');
-    const modelSelect = document.getElementById('model-select-chat');
-    const temperatureInput = document.getElementById('temperature-input');
-    const temperatureValue = document.getElementById('temperature-value');
-    const maxTokensInput = document.getElementById('max-tokens-input');
-    const searchInput = document.getElementById('search-input');
-    const chatBox = document.getElementById('chat-box');
-    const userInput = document.getElementById('user-input');
+    // --- عناصر DOM ---
+    const chatArea = document.getElementById('chat-area');
+    const messageInput = document.getElementById('message-input') as HTMLInputElement;
     const sendButton = document.getElementById('send-button');
-    const chatIdInput = document.getElementById('chat-id');
+    const typingIndicator = document.getElementById('typing-indicator');
+    const chatEnd = document.getElementById('chat-end');
+    const micButton = document.getElementById('mic-button');
+    const micLevelIndicator = document.getElementById('mic-level-indicator');
+    const sttStatus = document.getElementById('stt-status');
+    const ttsStatus = document.getElementById('tts-status');
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeIconLight = document.querySelector('.theme-icon-light');
+    const themeIconDark = document.querySelector('.theme-icon-dark');
+    const themeText = document.querySelector('.theme-text');
+    const temperatureSlider = document.getElementById('temperature-slider') as HTMLInputElement;
+    const temperatureValue = document.getElementById('temperature-value');
+    const maxTokensInput = document.getElementById('max-tokens-input') as HTMLInputElement;
+    const searchInput = document.getElementById('search-input') as HTMLInputElement;
+    const searchBar = document.getElementById('search-bar');
+    const searchToggleBtn = document.getElementById('search-toggle-btn');
+    const chatList = document.querySelector('.chat-dropdown-list');
+    const sidebarChatListContainer = document.querySelector('.sidebar-chat-list-container'); // حاوية قائمة المحادثات
 
-    // --- ثوابت وإعدادات ---
-    // *** هذا هو التغيير الرئيسي: أشر إلى نقطة نهاية الخادم الخلفي لديك ***
-    const BACKEND_API_ENDPOINT = '/api/chat'; // <--- عدّل هذا المسار ليتوافق مع خادم Render لديك
-    // const OPENROUTER_API_ENDPOINT is REMOVED
-
-    const STORAGE_KEYS = {
-        // No API Key here
-        conversations: 'chatdz_conversations',
-        darkMode: 'chatdz_darkMode'
-    };
-    const DEBOUNCE_DELAY = 300;
+    // --- بيانات المحادثة الحالية ---
+    const chatIdMeta = document.querySelector('meta[name="chat-id"]');
+    const chatModelMeta = document.querySelector('meta[name="chat-model"]');
+    const CHAT_ID = chatIdMeta ? chatIdMeta.getAttribute('content') : null;
+    const CHAT_MODEL = chatModelMeta ? chatModelMeta.getAttribute('content') : 'unknown';
 
     // --- حالة التطبيق ---
-    // let apiKey = ''; // REMOVED
-    let allConversations = [];
-    let currentConversationId = null;
-    let currentConversation = null;
-    let thinkingIndicator = null;
-    let searchDebounceTimer;
-    const synth = window.speechSynthesis;
-    let currentUtterance = null;
+    let isLoading = false;
+    let isListening = false;
+    let currentSpeechUtterance: SpeechSynthesisUtterance | null = null;
+    let currentSpeakingMessageId: string | null = null;
+    let recognition: SpeechRecognition | null = null;
+    let micLevelInterval: NodeJS.Timeout | null = null;
+    let autoSaveTimeout: NodeJS.Timeout | null = null;
 
-    // --- بدء تشغيل التطبيق ---
-    initializeChatApplication();
+    // --- تهيئة Web Speech API ---
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const synthesis = window.speechSynthesis;
+    const recognitionSupported = !!SpeechRecognition;
+    const synthesisSupported = !!synthesis;
 
-    // =====================================================================
-    //                        تهيئة التطبيق والتحميل الأولي
-    // =====================================================================
-    function initializeChatApplication() {
-        console.log("Initializing Chat Application...");
-        // API Key check is REMOVED from frontend
+    // --- وظائف الواجهة ---
+    const scrollToBottom = (behavior: ScrollBehavior = 'smooth') => {
+        // تأخير بسيط للسماح للـ DOM بالتحديث قبل التمرير
+        setTimeout(() => chatEnd?.scrollIntoView({ behavior: behavior, block: 'end' }), 50);
+    };
 
-        loadDarkModePreference();
-        allConversations = loadConversationsFromStorage();
+    const setLoadingState = (loading: boolean) => {
+        isLoading = loading;
+        const sendIcon = sendButton?.querySelector('.fa-paper-plane');
+        const loadingIcon = sendButton?.querySelector('.loading-icon');
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const requestedId = urlParams.get('id');
+        if (sendButton) sendButton.disabled = loading || !messageInput?.value.trim();
+        if (messageInput) messageInput.disabled = loading || isListening;
+        if (micButton) micButton.disabled = loading;
+        typingIndicator?.classList.toggle('hidden', !loading);
 
-        // --- (نفس منطق التحقق من ID والمحادثة والانتقال كما في الرد السابق) ---
-         if (!requestedId || !allConversations.some(c => c.id === requestedId)) {
-            console.warn(`Chat ID "${requestedId}" not found or invalid.`);
-            const latestConv = getLatestConversation();
-            if (latestConv) {
-                console.log("Redirecting to latest conversation:", latestConv.id);
-                switchConversation(latestConv.id, true);
-            } else {
-                console.log("No existing chats found, starting a new one.");
-                startNewChat(true);
-            }
-            return;
+        if (loading) {
+            sendIcon?.classList.add('hidden');
+            loadingIcon?.classList.remove('hidden');
+        } else {
+            loadingIcon?.classList.add('hidden');
+            sendIcon?.classList.remove('hidden');
+        }
+        if (!loading) scrollToBottom();
+    };
+
+    const addMessageToUI = (role: 'user' | 'ai' | 'error', text: string, messageId?: number | string) => {
+        const messageDiv = document.createElement('div');
+        messageDiv.classList.add('chat-message', 'flex', role === 'user' ? 'justify-end' : 'justify-start');
+        const uniqueId = messageId || `temp-${Date.now()}-${Math.random()}`; // ID مؤقت إذا لم يأت من الخادم
+        messageDiv.dataset.messageId = String(uniqueId);
+
+        const bubble = document.createElement('div');
+        bubble.classList.add(
+            'message-bubble', role, // إضافة كلاس الدور
+            'max-w-[85%]', 'sm:max-w-[80%]', 'md:max-w-[75%]',
+            'px-4', 'py-3', 'rounded-xl', 'shadow-md', 'relative', 'group'
+        );
+        // تطبيق الألوان والحواف بناءً على الدور
+        if (role === 'user') bubble.classList.add('bg-blue-600', 'text-white', 'rounded-br-none');
+        else if (role === 'error') bubble.classList.add('bg-red-700', 'text-white', 'rounded-bl-none');
+        else bubble.classList.add('bg-slate-700', 'text-zinc-100', 'rounded-bl-none');
+
+
+        const content = document.createElement('p');
+        content.classList.add('whitespace-pre-wrap', 'leading-relaxed');
+        content.textContent = text;
+        bubble.appendChild(content);
+
+        if (role === 'ai' || role === 'error') {
+            const actionsDiv = createMessageActions(role, text, String(uniqueId));
+            bubble.appendChild(actionsDiv);
         }
 
-        currentConversationId = requestedId;
-        currentConversation = allConversations.find(c => c.id === currentConversationId);
-        if (chatIdInput) chatIdInput.value = currentConversationId;
-
-        if (!currentConversation) {
-            handleFatalError(`خطأ فادح: لم يتم العثور على بيانات المحادثة لـ ID: ${currentConversationId}`);
-            return;
-        }
-        // --- نهاية منطق التحقق ---
-
-        console.log(`Chat loaded: ${currentConversation.title} (ID: ${currentConversationId})`);
-        loadCurrentConversationData();
-        renderSidebar();
-        setupAllEventListeners();
-        adjustTextareaHeight();
+        messageDiv.appendChild(bubble);
+        chatArea?.insertBefore(messageDiv, typingIndicator);
         scrollToBottom();
-        console.log("Chat Application Initialized Successfully.");
-    }
+        saveChatLocally(); // حفظ تلقائي بعد إضافة رسالة
+    };
 
-    // --- (باقي الدوال مثل handleFatalError, disableAllInputs كما هي) ---
-    function handleFatalError(message) { /* ... */ }
-    function disableAllInputs(disabled) { /* ... */ }
+    const createMessageActions = (role: 'ai' | 'error', text: string, messageId: string): HTMLDivElement => {
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'message-actions mt-2 pt-1.5 border-t border-white/10 flex items-center justify-end gap-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200';
+        actionsDiv.dir = 'ltr';
 
+        if (role === 'ai') {
+            // زر إعادة التوليد
+            const regenButton = document.createElement('button');
+            regenButton.className = 'regenerate-btn p-1.5 rounded-full hover:bg-white/20 text-gray-400 hover:text-white transition-colors';
+            regenButton.title = 'إعادة توليد الرد';
+            regenButton.innerHTML = '<i class="fas fa-sync-alt fa-xs"></i>';
+            regenButton.onclick = () => regenerateLastResponse();
+            actionsDiv.appendChild(regenButton);
 
-    // =====================================================================
-    //                        إدارة المحادثات (بيانات + واجهة جانبية)
-    // =====================================================================
-    // --- (الدوال loadConversationsFromStorage, saveConversationsToStorage, getLatestConversation, renderSidebar, switchConversation, startNewChat, createNewConversationObject, handleRenameConversation, handleDeleteConversationFromSidebar, handleDeleteCurrentChatFromHeader كما هي في الرد السابق) ---
-    function loadConversationsFromStorage() { /* ... */ }
-    function saveConversationsToStorage() { /* ... */ }
-    function getLatestConversation() { /* ... */ }
-    function renderSidebar() { /* ... */ }
-    function switchConversation(newId, replaceState = false) { /* ... */ }
-    function startNewChat(replaceState = false) { /* ... */ }
-    function createNewConversationObject() { /* ... */ }
-    function handleRenameConversation(convId, newTitle = null) { // تعديل لاستقبال عنوان اختياري
-        const conv = allConversations.find(c => c.id === convId);
-        if (!conv) return;
-        let finalNewTitle = newTitle; // استخدام العنوان الممرر إن وجد
-
-        if (finalNewTitle === null) { // إذا لم يتم تمرير عنوان، اطلب من المستخدم
-            const currentTitle = conv.title || '';
-            finalNewTitle = prompt("أدخل العنوان الجديد للمحادثة:", currentTitle);
-        }
-
-        if (finalNewTitle !== null && finalNewTitle.trim() !== '' && finalNewTitle.trim() !== conv.title) {
-            conv.title = finalNewTitle.trim();
-            if (conv.id === currentConversationId) {
-                chatTitleElement.textContent = conv.title;
-                chatTitleElement.title = conv.title;
+            // زر النطق (إذا كان مدعومًا)
+            if (synthesisSupported) {
+                const speakButton = document.createElement('button');
+                speakButton.className = 'speak-btn p-1.5 rounded-full hover:bg-white/20 text-gray-400 hover:text-white transition-colors';
+                speakButton.title = 'نطق الرد';
+                speakButton.innerHTML = '<i class="fas fa-volume-up fa-xs"></i>';
+                speakButton.onclick = () => handleSpeak(text, messageId);
+                actionsDiv.appendChild(speakButton);
             }
-            saveConversationsToStorage();
-            renderSidebar();
-            console.log(`Chat ${convId} renamed to "${conv.title}"`);
         }
-     }
-    function handleDeleteConversationFromSidebar(convId, convTitle) { /* ... */ }
-    function handleDeleteCurrentChatFromHeader() { /* ... */ }
 
+        // زر النسخ
+        const copyButton = document.createElement('button');
+        copyButton.className = 'copy-btn p-1.5 rounded-full hover:bg-white/20 text-gray-400 hover:text-white transition-colors';
+        copyButton.title = 'نسخ النص';
+        copyButton.innerHTML = '<i class="fas fa-copy fa-xs copy-icon"></i><i class="fas fa-check fa-xs text-green-400 hidden check-icon"></i>';
+        copyButton.onclick = (e) => handleCopy(e.currentTarget as HTMLButtonElement, text);
+        actionsDiv.appendChild(copyButton);
 
-    // =====================================================================
-    //                        تحميل وعرض بيانات المحادثة الحالية
-    // =====================================================================
-    // --- (الدوال loadCurrentConversationData, loadConversationSettings, saveCurrentConversationSettings كما هي في الرد السابق) ---
-     function loadCurrentConversationData() {
-         if (!currentConversation) { /*...*/ return; }
-         chatTitleElement.textContent = currentConversation.title || '...';
-         chatTitleElement.title = currentConversation.title || '...';
-         loadConversationSettings(currentConversation.settings);
-         renderChatMessages(currentConversation.messages);
-         if (searchInput) searchInput.value = '';
-         clearSearchHighlights();
-     }
-     function loadConversationSettings(settings) { /* ... */ }
-     function saveCurrentConversationSettings() { /* ... */ }
+        return actionsDiv;
+    };
 
-    // =====================================================================
-    //                        عرض ومعالجة الرسائل
-    // =====================================================================
-    // --- (الدوال renderChatMessages, addMessageToDOM, addMessageToConversationState كما هي في الرد السابق) ---
-     function renderChatMessages(messages) { /* ... */ }
-     function addMessageToDOM(role, content, index, messageId = null) { /* ... */ }
-     function addMessageToConversationState(role, content, messageId = null) { /* ... */ }
+    // --- وظائف API ---
+    const sendMessageToServer = async () => {
+        const messageText = messageInput.value.trim();
+        if (!messageText || isLoading || !CHAT_ID) return;
 
-    // =====================================================================
-    //                        إرسال الرسائل والتفاعل مع API (التعديل الرئيسي هنا)
-    // =====================================================================
-    async function sendMessage() {
-        if (!userInput || !currentConversation) return;
-        const userText = userInput.value.trim();
-        if (!userText) return;
-        // API Key check is REMOVED from frontend
-
-        const userMsgObj = addMessageToConversationState('user', userText);
-        addMessageToDOM('user', userText, currentConversation.messages.length -1, userMsgObj.id);
-        userInput.value = '';
-        adjustTextareaHeight();
-        scrollToBottom();
-        clearSearchHighlights();
-
-        showThinkingIndicator();
-        disableAllInputs(true);
+        addMessageToUI('user', messageText);
+        messageInput.value = '';
+        setLoadingState(true);
+        if (isSpeaking) cancelSpeech(); // إيقاف النطق عند الإرسال
 
         try {
-            const historyLimit = 20;
-            const messagesToSend = currentConversation.messages
-                .slice(-historyLimit)
-                .map(m => ({ role: m.role, content: m.content }));
-
-            // *** التغيير هنا: تجهيز الطلب للخادم الخلفي ***
-            const requestBody = {
-                chatId: currentConversationId, // أرسل ID المحادثة
-                settings: currentConversation.settings, // أرسل الإعدادات
-                messages: messagesToSend // أرسل سجل الرسائل المطلوب
-            };
-
-            console.log("Sending request to Backend API:", BACKEND_API_ENDPOINT, JSON.stringify(requestBody, null, 2));
-
-            // *** التغيير هنا: استدعاء الخادم الخلفي بدلاً من OpenRouter مباشرة ***
-            const response = await fetch(BACKEND_API_ENDPOINT, {
+            const response = await fetch(`/api/chat/${CHAT_ID}`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // أضف أي Headers أخرى يحتاجها الخادم الخلفي (مثل التوثيق CSRF/JWT)
-                    // 'Authorization': `Bearer ${userAuthToken}` // مثال
-                },
-                body: JSON.stringify(requestBody)
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: messageText,
+                    temperature: parseFloat(temperatureSlider?.value || '0.7'),
+                    max_tokens: parseInt(maxTokensInput?.value || '500')
+                }),
             });
 
-            removeThinkingIndicator();
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}));
-                // حاول الحصول على رسالة الخطأ من الخادم الخلفي
-                const errorMessage = errorData?.error || errorData?.message || `خطأ من الخادم: ${response.status} ${response.statusText}`;
-                 console.error("Backend API Error Response:", errorData);
-                throw new Error(errorMessage);
-            }
-
-            // افترض أن الخادم الخلفي يعيد استجابة مشابهة لـ OpenRouter
             const data = await response.json();
-            console.log("Received from Backend API:", data);
-            // *** تأكد من أن بنية الرد من الخادم الخلفي متوافقة مع هذا ***
-            const botReply = data.choices?.[0]?.message?.content?.trim() || data.reply; // كن مرنًا في قراءة الرد
 
-            if (botReply) {
-                 const botMsgObj = addMessageToConversationState('assistant', botReply);
-                 // افترض أن الخادم يعيد IDs في الرد
-                 // const userMsgServerId = data.userMessageId;
-                 // const botMsgServerId = data.botMessageId;
-                 // updateMessageIdInStateAndDOM(userMsgObj.id, userMsgServerId);
-                 // updateMessageIdInStateAndDOM(null, botMsgServerId, botMsgObj); // طريقة أخرى للتحديث
-
-                 addMessageToDOM('assistant', botReply, currentConversation.messages.length - 1, botMsgObj.id /* أو botMsgServerId */);
-                 scrollToBottom();
+            if (!response.ok || data.error) {
+                addMessageToUI('error', data.reply || data.error || 'حدث خطأ غير معروف');
             } else {
-                console.warn("No valid reply content found in backend response:", data);
-                addMessageToDOM('assistant', "(لم يتم استلام رد واضح من الخادم)", currentConversation.messages.length);
+                addMessageToUI('ai', data.reply, data.message_id);
+                if (localStorage.getItem('autoSpeak') !== 'false' && synthesisSupported) {
+                    handleSpeak(data.reply, data.message_id);
+                }
             }
-
         } catch (error) {
-            console.error('Error sending message via backend:', error);
-            removeThinkingIndicator();
-            addMessageToDOM('assistant', `حدث خطأ: ${error.message}`, currentConversation.messages.length);
-            scrollToBottom();
+            console.error('Send message error:', error);
+            addMessageToUI('error', 'فشل الاتصال بالخادم.');
         } finally {
-            disableAllInputs(false);
-            if (userInput) userInput.focus();
+            setLoadingState(false);
         }
-    }
+    };
 
-    // =====================================================================
-    //                        إجراءات على الرسائل (تعديل إعادة التوليد)
-    // =====================================================================
-    // --- (الدوال handleMessageActions, copyToClipboard, speakText, handleDeleteIndividualMessage كما هي في الرد السابق) ---
-     function handleMessageActions(event) { /* ... */ }
-     function copyToClipboard(text) { /* ... */ }
-     function speakText(text, button) { /* ... */ }
-     function handleDeleteIndividualMessage(messageId, messageIndex, messageElement) { /* ... */ }
+    const regenerateLastResponse = async () => {
+        if (isLoading || !CHAT_ID) return;
 
+        const aiMessages = chatArea?.querySelectorAll('.chat-message .message-bubble.ai');
+        const lastAiMessageBubble = aiMessages ? aiMessages[aiMessages.length - 1] : null;
+        const lastAiMessageDiv = lastAiMessageBubble?.closest('.chat-message');
+        const lastAiMessageId = lastAiMessageDiv?.getAttribute('data-message-id');
 
-    // --- تعديل دالة إعادة التوليد لتعمل عبر الخادم الخلفي ---
-    async function regenerateResponse(botMessageIndex) {
-        if (!currentConversation || botMessageIndex < 1) return; // لا يمكن إعادة توليد أول رسالة
-
-        let userMessageIndex = -1;
-        for (let i = botMessageIndex - 1; i >= 0; i--) {
-            if (currentConversation.messages[i].role === 'user') {
-                userMessageIndex = i;
-                break;
-            }
-        }
-        if (userMessageIndex === -1) {
-            console.warn("Cannot regenerate: No preceding user message.");
-            showToast("لا يمكن إعادة التوليد.", 'warn');
+        if (!lastAiMessageDiv || !lastAiMessageId) {
+            alert("لا توجد رسالة سابقة لإعادة توليدها.");
             return;
         }
 
-        // --- TODO: Call backend to delete messages from botMessageIndex onwards ---
-
-        // --- Simulate local removal ---
-        const messagesToRemoveCount = currentConversation.messages.length - botMessageIndex;
-        currentConversation.messages.splice(botMessageIndex, messagesToRemoveCount);
-        saveConversationsToStorage();
-        renderChatMessages(currentConversation.messages);
-
-        showThinkingIndicator();
-        disableAllInputs(true);
+        setLoadingState(true);
+        lastAiMessageDiv.classList.add('opacity-50'); // تعتيم الرسالة القديمة
 
         try {
-            // Prepare messages up to the user message
-            const messagesToSend = currentConversation.messages
-                .slice(0, userMessageIndex + 1)
-                .map(m => ({ role: m.role, content: m.content }));
-
-            // *** التغيير هنا: تجهيز الطلب للخادم الخلفي ***
-            const requestBody = {
-                chatId: currentConversationId,
-                settings: currentConversation.settings,
-                messages: messagesToSend,
-                regenerate: true // أضف علامة لإعلام الخادم بأن هذا طلب إعادة توليد
-            };
-
-            console.log("Sending Regeneration Request to Backend:", BACKEND_API_ENDPOINT, JSON.stringify(requestBody, null, 2));
-
-            // *** التغيير هنا: استدعاء الخادم الخلفي ***
-            const response = await fetch(BACKEND_API_ENDPOINT, { // استخدم نفس نقطة النهاية أو واحدة مخصصة
-                 method: 'POST',
-                 headers: { 'Content-Type': 'application/json', /* Auth headers? */ },
-                 body: JSON.stringify(requestBody)
+            const response = await fetch(`/api/regenerate/${CHAT_ID}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({
+                    temperature: parseFloat(temperatureSlider?.value || '0.7'),
+                    max_tokens: parseInt(maxTokensInput?.value || '500')
+                }),
             });
-
-            removeThinkingIndicator();
-
-            if (!response.ok) {
-                 const errorData = await response.json().catch(() => ({}));
-                 throw new Error(errorData?.error || errorData?.message || `خطأ من الخادم: ${response.status}`);
-            }
-
             const data = await response.json();
-            console.log("Received Regenerated Response from Backend:", data);
-             const botReply = data.choices?.[0]?.message?.content?.trim() || data.reply;
 
-            if (botReply) {
-                 const botMsgObj = addMessageToConversationState('assistant', botReply);
-                 // const botMsgServerId = data.botMessageId; // Get ID if backend returns it
-                 addMessageToDOM('assistant', botReply, currentConversation.messages.length - 1, botMsgObj.id /* or botMsgServerId */);
-                 scrollToBottom();
-                 // --- TODO: Call backend to save the new bot message ---
+            lastAiMessageDiv.remove(); // إزالة الرسالة القديمة بعد استلام الرد
+
+            if (!response.ok || data.error) {
+                addMessageToUI('error', data.reply || data.error || 'فشلت إعادة التوليد.');
             } else {
-                 console.warn("No content in regenerated reply from backend:", data);
-                 addMessageToDOM('assistant', "(فشل الحصول على رد جديد)", currentConversation.messages.length);
+                addMessageToUI('ai', data.reply, data.message_id);
+                 if (localStorage.getItem('autoSpeak') !== 'false' && synthesisSupported) {
+                    handleSpeak(data.reply, data.message_id);
+                }
             }
-
         } catch (error) {
-            console.error('Error regenerating response via backend:', error);
-            removeThinkingIndicator();
-            addMessageToDOM('assistant', `خطأ في إعادة التوليد: ${error.message}`, currentConversation.messages.length);
-            scrollToBottom();
+            console.error('Regenerate error:', error);
+            addMessageToUI('error', 'فشل الاتصال لإعادة التوليد.');
+            lastAiMessageDiv.classList.remove('opacity-50'); // إعادة إظهار الرسالة القديمة عند الفشل
         } finally {
-            disableAllInputs(false);
+            setLoadingState(false);
         }
+    };
+
+    // --- وظائف الأزرار الإضافية ---
+    const handleCopy = (button: HTMLButtonElement, text: string) => {
+        navigator.clipboard.writeText(text).then(() => {
+            const copyIcon = button.querySelector('.copy-icon');
+            const checkIcon = button.querySelector('.check-icon');
+            copyIcon?.classList.add('hidden');
+            checkIcon?.classList.remove('hidden');
+            setTimeout(() => {
+                copyIcon?.classList.remove('hidden');
+                checkIcon?.classList.add('hidden');
+            }, 1500);
+        }).catch(err => console.error('Copy failed:', err));
+    };
+
+    const handleSpeak = (text: string, messageId: string | number) => {
+        if (!synthesisSupported) return;
+        const msgIdStr = String(messageId);
+
+        // إيقاف النطق الحالي
+        if (synthesis.speaking) {
+            synthesis.cancel(); // سيؤدي هذا إلى تفعيل onend للutterance السابق
+        }
+
+        // إذا كان النقر على نفس زر النطق مرة أخرى، فقط أوقف
+        if (isSpeaking && currentSpeakingMessageId === msgIdStr) {
+            return; // cancel() تم استدعاؤها بالفعل
+        }
+
+        const utterance = new SpeechSynthesisUtterance(text);
+        const voices = synthesis.getVoices();
+        let arabicVoice = voices.find(v => v.lang.startsWith('ar') && v.name.includes('Female') && !v.localService);
+        if (!arabicVoice) arabicVoice = voices.find(v => v.lang.startsWith('ar') && !v.localService);
+        if (!arabicVoice) arabicVoice = voices.find(v => v.lang.startsWith('ar') && v.name.includes('Female'));
+        if (!arabicVoice) arabicVoice = voices.find(v => v.lang.startsWith('ar'));
+        if (arabicVoice) { utterance.voice = arabicVoice; utterance.lang = arabicVoice.lang; }
+        else { utterance.lang = 'ar-SA'; }
+        utterance.rate = 1.0; utterance.pitch = 1.0;
+
+        currentSpeechUtterance = utterance;
+        currentSpeakingMessageId = msgIdStr;
+
+        // إزالة التمييز من الرسائل الأخرى وتطبيق التمييز على الحالية
+        document.querySelectorAll('.message-bubble.speaking').forEach(el => el.classList.remove('speaking', 'ring-2', 'ring-brand-blue'));
+        const currentMsgBubble = chatArea?.querySelector(`.chat-message[data-message-id="${msgIdStr}"] .message-bubble`);
+        currentMsgBubble?.classList.add('speaking', 'ring-2', 'ring-brand-blue');
+
+        utterance.onstart = () => setIsSpeaking(true);
+        utterance.onend = () => {
+            setIsSpeaking(false);
+            currentSpeechUtterance = null;
+            currentSpeakingMessageId = null;
+            currentMsgBubble?.classList.remove('speaking', 'ring-2', 'ring-brand-blue');
+        };
+        utterance.onerror = (e) => {
+            console.error("TTS Error:", e);
+            setIsSpeaking(false); currentSpeechUtterance = null; currentSpeakingMessageId = null;
+            currentMsgBubble?.classList.remove('speaking', 'ring-2', 'ring-brand-blue');
+            alert("حدث خطأ أثناء تشغيل الصوت.");
+        };
+
+        synthesis.speak(utterance);
+    };
+
+    // --- وظائف STT (Web Speech API) ---
+    const startListening = () => {
+        if (!recognition || isListening || isLoading) return;
+        if (isSpeaking) cancelSpeech(); // إيقاف النطق قبل الاستماع
+        try {
+            recognition.start();
+        } catch (e) {
+            console.error("STT Start Error:", e);
+            alert("لم يتمكن من بدء التعرف على الصوت. قد تحتاج إلى منح الإذن أولاً.");
+        }
+    };
+
+    const stopListening = () => {
+        if (recognition && isListening) {
+            recognition.stop();
+        }
+    };
+
+    // --- إعداد STT ---
+    if (recognitionSupported) {
+        recognition = new SpeechRecognition();
+        recognition.lang = 'ar-SA';
+        recognition.continuous = false;
+        recognition.interimResults = false;
+
+        recognition.onstart = () => {
+            isListening = true;
+            micButton?.classList.add('bg-red-600', 'hover:bg-red-700', 'animate-mic-pulse');
+            micButton?.classList.remove('bg-purple-700', 'hover:bg-purple-800');
+            micButton?.querySelector('i')?.classList.replace('fa-microphone', 'fa-stop');
+            messageInput.placeholder = 'جاري الاستماع...';
+            messageInput.disabled = true;
+            if (micLevelIndicator) micLevelInterval = setInterval(() => {
+                micLevelIndicator.style.transform = `scaleY(${Math.random()})`;
+            }, 150);
+        };
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[event.results.length - 1][0].transcript.trim();
+            messageInput.value = transcript;
+            // إرسال تلقائي بعد التعرف
+            if (transcript) sendMessageToServer();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('STT Error:', event.error);
+            let errorMsg = `خطأ STT: ${event.error}`;
+            if (event.error === 'no-speech') errorMsg = 'لم يتم اكتشاف كلام.';
+            if (event.error === 'not-allowed') errorMsg = 'تم رفض إذن الميكروفون.';
+            alert(errorMsg); // إبلاغ المستخدم
+        };
+
+        recognition.onend = () => {
+            isListening = false;
+            micButton?.classList.remove('bg-red-600', 'hover:bg-red-700', 'animate-mic-pulse');
+            micButton?.classList.add('bg-purple-700', 'hover:bg-purple-800');
+            micButton?.querySelector('i')?.classList.replace('fa-stop', 'fa-microphone');
+            messageInput.placeholder = 'اكتب رسالتك هنا...';
+            messageInput.disabled = isLoading;
+            if (micLevelInterval) clearInterval(micLevelInterval);
+            micLevelIndicator?.style.setProperty('transform', 'scaleY(0)');
+            if (!isLoading) messageInput.focus();
+        };
+    } else {
+        micButton?.classList.add('hidden');
+        sttStatus?.classList.remove('hidden');
     }
 
+    if (!synthesisSupported) {
+        ttsStatus?.classList.remove('hidden');
+        // لا حاجة لتعطيل الأزرار هنا لأنها تضاف ديناميكيًا مع التحقق
+    }
 
-    // =====================================================================
-    //                        البحث داخل المحادثة
-    // =====================================================================
-    // --- (الدوال handleSearch, clearSearchHighlights, highlightSearchResults كما هي في الرد السابق) ---
-     function handleSearch() { /* ... */ }
-     function clearSearchHighlights() { /* ... */ }
-     function highlightSearchResults(term) { /* ... */ }
+    // --- البحث ---
+    searchToggleBtn?.addEventListener('click', () => {
+        searchBar?.classList.toggle('hidden');
+        if (!searchBar?.classList.contains('hidden')) searchInput?.focus();
+        else { searchInput.value = ''; filterMessages(''); }
+    });
+    searchInput?.addEventListener('input', (e) => filterMessages((e.target as HTMLInputElement).value));
 
-    // =====================================================================
-    //                        تصدير المحادثة
-    // =====================================================================
-    // --- (الدالة exportCurrentChat كما هي في الرد السابق) ---
-    function exportCurrentChat() { /* ... */ }
+    const filterMessages = (searchTerm: string) => {
+        const term = searchTerm.toLowerCase().trim();
+        chatArea?.querySelectorAll('.chat-message').forEach(msgElement => {
+            const textContent = msgElement.querySelector('.message-bubble p')?.textContent?.toLowerCase() || '';
+            msgElement.classList.toggle('hidden', !(term === '' || textContent.includes(term)));
+        });
+        scrollToBottom('auto'); // تمرير فوري عند البحث
+    };
 
-    // =====================================================================
-    //                        الوضع الليلي
-    // =====================================================================
-    // --- (الدوال toggleDarkMode, loadDarkModePreference, updateDarkModeButton كما هي في الرد السابق) ---
-     function toggleDarkMode() { /* ... */ }
-     function loadDarkModePreference() { /* ... */ }
-     function updateDarkModeButton(isDarkMode) { /* ... */ }
+    // --- إدارة المحادثات (الشريط الجانبي) ---
+    chatList?.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const chatItem = target.closest('.chat-dropdown-item');
+        if (!chatItem) return;
+        const chatId = chatItem.getAttribute('data-chat-id');
+        if (!chatId) return;
 
-    // =====================================================================
-    //                        وظائف مساعدة (UI, Utilities)
-    // =====================================================================
-    // --- (الدوال scrollToBottom, adjustTextareaHeight, showToast كما هي في الرد السابق) ---
-     function scrollToBottom() { /* ... */ }
-     function adjustTextareaHeight() { /* ... */ }
-     function showToast(message, type = 'success') { /* ... */ }
+        if (target.closest('.rename-chat-btn')) {
+            e.preventDefault();
+            const currentTitleElement = chatItem.querySelector('a');
+            const currentTitle = currentTitleElement?.textContent?.trim() || '';
+            const newTitle = prompt("أدخل العنوان الجديد:", currentTitle);
+            if (newTitle && newTitle.trim() && newTitle !== currentTitle) {
+                fetch(`/api/chats/${chatId}/rename`, {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ title: newTitle.trim() })
+                })
+                .then(res => res.ok ? res.json() : Promise.reject(res))
+                .then(data => { if (currentTitleElement) currentTitleElement.textContent = data.new_title; if (CHAT_ID === chatId) document.title = `${data.new_title} - ياسمين GPT`; })
+                .catch(async err => { const error = await err.json().catch(()=>({})); alert(`فشل إعادة التسمية: ${error.error || err.statusText}`); });
+            }
+        } else if (target.closest('.delete-chat-btn')) {
+            e.preventDefault();
+            if (confirm("هل أنت متأكد من حذف المحادثة؟")) {
+                fetch(`/api/chats/${chatId}/delete`, { method: 'POST' })
+                .then(res => res.ok ? res.json() : Promise.reject(res))
+                .then(() => { chatItem.remove(); if (CHAT_ID === chatId) window.location.href = '/'; })
+                .catch(async err => { const error = await err.json().catch(()=>({})); alert(`فشل الحذف: ${error.error || err.statusText}`); });
+            }
+        }
+    });
 
-    // =====================================================================
-    //                        إعداد مستمعي الأحداث
-    // =====================================================================
-    // --- (الدالة setupAllEventListeners كما هي في الرد السابق) ---
-     function setupAllEventListeners() { /* ... */ }
+    // --- ربط الأحداث الرئيسية ---
+    sendButton?.addEventListener('click', sendMessageToServer);
+    messageInput?.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessageToServer(); } });
+    micButton?.addEventListener('click', () => { if (isListening) stopListening(); else startListening(); });
 
-}); // End DOMContentLoaded
+    // --- إضافة مستمعي الأحداث للأزرار الديناميكية ---
+    chatArea?.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const messageDiv = target.closest('.chat-message');
+        const messageId = messageDiv?.getAttribute('data-message-id');
+        const text = messageDiv?.querySelector('.message-bubble p')?.textContent || '';
+
+        if (target.closest('.copy-btn') && messageId) {
+            handleCopy(target.closest('.copy-btn') as HTMLButtonElement, text);
+        } else if (target.closest('.speak-btn') && messageId) {
+            handleSpeak(text, messageId);
+        } else if (target.closest('.regenerate-btn') && messageId) {
+            regenerateLastResponse();
+        }
+    });
+
+    // --- الحفظ التلقائي للإعدادات (عند التغيير) ---
+    // (تم ربطها مباشرة بـ event listeners الخاصة بالمدخلات)
+
+    // --- التحميل الأولي ---
+    if (chatArea) { // تأكد من وجود منطقة الدردشة قبل التمرير
+        scrollToBottom('auto'); // تمرير فوري عند التحميل
+    }
+    messageInput?.focus();
+
+}); // نهايةDOMContentLoaded
