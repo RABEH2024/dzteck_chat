@@ -1,31 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
-  const chatItems = document.querySelectorAll('.chat-dropdown-item');
+  const chatList = document.getElementById('chat-list');
 
-  chatItems.forEach(item => {
-    const renameBtn = item.querySelector('.rename-chat-btn');
-    const deleteBtn = item.querySelector('.delete-chat-btn');
+  if (chatList) {
+    chatList.addEventListener('click', (e) => {
+      const deleteBtn = e.target.closest('.delete-list-item-btn');
+      if (deleteBtn) {
+        const chatItem = deleteBtn.closest('.chat-item');
+        const chatId = chatItem.dataset.chatId;
 
-    renameBtn.addEventListener('click', () => {
-      const chatId = item.dataset.chatId;
-      const newTitle = prompt("أدخل عنوانًا جديدًا:");
-      if (newTitle) {
-        fetch(`/chat/${chatId}/rename`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: newTitle })
-        }).then(() => {
-          item.querySelector('a').textContent = newTitle;
-        });
+        if (confirm("هل تريد حذف هذه المحادثة؟")) {
+          fetch(`/chat/${chatId}`, {
+            method: 'DELETE',
+            headers: { 'Content-Type': 'application/json' }
+          }).then(res => {
+            if (res.ok) {
+              chatItem.remove();
+            } else {
+              alert('فشل الحذف');
+            }
+          });
+        }
       }
     });
-
-    deleteBtn.addEventListener('click', () => {
-      const chatId = item.dataset.chatId;
-      if (confirm("هل تريد حذف هذه المحادثة؟")) {
-        fetch(`/chat/${chatId}`, { method: 'DELETE' }).then(() => {
-          item.remove();
-        });
-      }
-    });
-  });
+  }
 });
