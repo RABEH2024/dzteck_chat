@@ -3,57 +3,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat DZ - محادثاتك</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Chat DZ - محادثاتك الذكية</title> <!-- تعديل العنوان -->
+    <meta name="description" content="Chat DZ - تحدث مع أحدث نماذج الذكاء الاصطناعي باللغة العربية">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="style.css"> <!-- استخدام اسم الملف الصحيح -->
+    <!-- <link rel="icon" href="img/favicon.ico"> -->
 </head>
-<body class="index-page">
-
-    <div class="index-container">
-        <header class="index-header">
-            <h1>Chat DZ</h1>
-            <p>محادثات الذكاء الاصطناعي الخاصة بك</p>
-             <div class="api-key-section">
-                 <label for="api-key-index">مفتاح OpenRouter API:</label>
-                 <input type="password" id="api-key-index" placeholder="أدخل مفتاح API هنا (يُحفظ محليًا)">
-                 <small>مطلوب لبدء محادثات جديدة والتفاعل.</small>
-             </div>
+<body class="index-page"> <!-- لتطبيق أنماط خاصة -->
+    <div class="chat-container index-container"> <!-- تمييز الحاوية -->
+        <header class="chat-header index-header">
+            <div class="header-left">
+                <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
+            </div>
+            <div class="header-right">
+                 <!-- يمكنك إضافة لوجو هنا إذا أردت -->
+                 <!-- <img src="img/logo.svg" alt="Chat DZ Logo" class="logo-img"> -->
+                <span class="brand-name">Chat DZ</span>
+            </div>
         </header>
 
-        <main class="index-main">
+        <main class="main-content">
+            <!-- قسم إدخال المفتاح -->
+            <section class="api-key-section-index">
+                 <h2><i class="fas fa-key"></i> إعدادات الاتصال</h2>
+                <div class="api-key-input-container">
+                    <label for="api-key-index">مفتاح OpenRouter API:</label>
+                    <div class="api-key-wrapper">
+                         <input type="password" id="api-key-index" placeholder="أدخل مفتاح API هنا (يُحفظ محليًا)">
+                         <button id="toggle-api-key-index" title="إظهار/إخفاء المفتاح"><i class="fas fa-eye"></i></button>
+                    </div>
+                    <small>مطلوب لبدء محادثات جديدة والتفاعل مع النماذج.</small>
+                </div>
+            </section>
+
+             <!-- قسم بدء محادثة جديدة -->
             <section class="new-chat-section">
-                <h2>بدء محادثة جديدة</h2>
-                <div class="model-selector-index">
-                    <label for="model-select-index">اختر نموذجًا للبدء:</label>
-                    <select id="model-select-index">
-                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B Instruct v0.2</option>
-                        <option value="google/gemma-7b-it">Google Gemma 7B</option>
-                        <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 Mistral 7B</option>
-                         <!-- يمكن إضافة المزيد هنا أو تحميلها ديناميكيًا -->
+                <h2><i class="fas fa-plus-circle"></i> بدء محادثة جديدة</h2>
+                 <div class="model-selector">
+                    <label for="model-select-index">اختر نموذج الذكاء الاصطناعي للبدء:</label>
+                    <select id="model-select-index" name="model" required>
+                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B (سريع ومجاني)</option>
+                        <option value="google/gemma-7b-it">Google Gemma 7B (مجاني)</option>
+                        <option value="anthropic/claude-3-haiku-20240307">Claude 3 Haiku (متوازن)</option>
+                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo (شائع)</option>
+                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B (الأحدث)</option>
+                         <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2 (مجاني)</option>
+                         <!-- أضف نماذج أخرى حسب الحاجة -->
                     </select>
                 </div>
-                <button id="start-new-chat-button">إنشاء وبدء الدردشة</button>
+                <button id="start-new-chat-button" class="new-chat-button">
+                    <i class="fas fa-comments"></i> إنشاء وبدء الدردشة
+                </button>
             </section>
 
+            <!-- قسم المحادثات المحفوظة -->
             <section class="conversations-list-section">
-                <h2>المحادثات المحفوظة</h2>
-                <ul id="conversation-list-index">
+                <h2><i class="fas fa-list-ul"></i> المحادثات المحفوظة</h2>
+                <div class="chat-list" id="conversation-list-index">
                     <!-- سيتم ملء قائمة المحادثات هنا بواسطة script.js -->
-                    <!-- مثال لعنصر قائمة:
-                    <li>
-                        <a href="chat.html?id=12345">عنوان المحادثة</a>
-                        <button class="delete-conv-button" data-id="12345">🗑️</button>
-                    </li>
-                     -->
-                </ul>
-                <p id="no-conversations-message" style="display: none;">لا توجد محادثات محفوظة حتى الآن.</p>
+                     <!-- مثال لعنصر قائمة يضاف بواسطة JS:
+                    <div class="chat-item" data-chat-id="17151904233">
+                        <a href="chat.html?id=17151904233" class="chat-link" title="...">
+                            <span class="chat-title">عنوان تجريبي</span>
+                            <span class="chat-date"><i class="far fa-clock"></i> 2024/05/08</span>
+                        </a>
+                        <button class="delete-list-item-btn" title="حذف هذه المحادثة">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                    -->
+                </div>
+                <p id="no-conversations-message" class="no-chats-message" style="display: none;">ابدأ محادثة جديدة لاستكشاف إمكانيات الذكاء الاصطناعي!</p>
             </section>
+
+            <!-- Info Banner (اختياري) -->
+            <div class="info-banner">
+                <p><i class="fas fa-info-circle"></i> اكتشف قوة الذكاء الاصطناعي بلغتك الأم. Chat DZ يربطك بأفضل النماذج العالمية.</p>
+                <!-- <a href="#" id="download-apk-btn" class="download-app-button"><i class="fas fa-mobile-alt"></i> تحميل التطبيق</a> -->
+            </div>
         </main>
 
-        <footer class="index-footer">
-            <p>© 2024 Chat DZ - تطبيق تجريبي</p>
+        <footer class="chat-footer">
+            <p>© 2024 Chat DZ - Developed by Rahmani</p>
+            <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية بطلاقة.</p>
         </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script> <!-- استخدام اسم الملف الصحيح -->
 </body>
 </html>
