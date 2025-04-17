@@ -69,16 +69,17 @@ button:active {
 
 /* --- Main Container --- */
 .chat-container {
-    max-width: 850px;
+    max-width: 850px; /* عرض مناسب */
     width: 100%;
-    margin: 20px auto;
+    margin: 20px auto; /* هامش علوي وسفلي */
+    padding: 0;
     background-color: #ffffff;
     box-shadow: var(--box-shadow);
-    border-radius: var(--border-radius);
+    border-radius: var(--border-radius); /* حواف دائرية للحاوية */
     display: flex;
     flex-direction: column;
-    overflow: hidden;
-    flex-grow: 1;
+    overflow: hidden; /* لمنع تجاوز المحتوى للحواف الدائرية */
+    flex-grow: 1; /* السماح بالتمدد إذا كانت الصفحة قصيرة */
 }
 
 /* --- Header (Original Style - Restored & Enhanced) --- */
@@ -87,8 +88,8 @@ button:active {
     align-items: center;
     justify-content: space-between;
     padding: 12px 20px;
-    border-bottom: 1px solid var(--border-color);
-    background-color: var(--light-color);
+    border-bottom: 1px solid var(--border-color); /* خط فاصل أنعم */
+    background-color: var(--light-color); /* خلفية فاتحة للهيدر */
     flex-shrink: 0;
 }
 
@@ -202,32 +203,83 @@ button:active {
     margin-bottom: 25px;
 }
 .chat-item {
-    display: flex;
+    display: flex; /* Changed from flex to allow internal link */
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 15px; /* padding أكبر */
     margin-bottom: 10px;
-    background-color: #fff;
+    background-color: white;
     border-radius: var(--border-radius);
     border: 1px solid var(--border-color);
     transition: all 0.2s ease-in-out;
+    position: relative; /* Needed for delete button positioning */
+    padding-left: 50px; /* Space for delete button on the left (due to RTL) */
 }
 .chat-item:hover {
     border-color: var(--primary-color);
     box-shadow: 0 3px 8px rgba(0, 123, 255, 0.1);
     transform: translateY(-2px);
 }
+/* Link inside chat item */
+.chat-item .chat-link {
+    display: flex; /* Make link behave like flex container */
+    flex-grow: 1; /* Allow link to take available space */
+    justify-content: space-between;
+    align-items: center;
+    color: inherit; /* Inherit color from parent */
+    margin-left: 10px; /* Space between link content and delete button */
+}
+.chat-item .chat-link:hover {
+    text-decoration: none; /* Remove underline from link itself */
+}
+
 .chat-title {
     font-weight: 600;
     font-size: 1em;
     color: var(--dark-color);
+    /* Allow title to wrap if long */
+    white-space: normal;
+    word-break: break-word;
+    margin-left: 10px; /* Space before date */
 }
 .chat-date {
     color: var(--secondary-color);
-    font-size: 0.8em;
+    font-size: 0.8em; /* تصغير التاريخ قليلاً */
     flex-shrink: 0;
-    margin-right: 15px;
+    white-space: nowrap; /* Prevent date from wrapping */
 }
+
+/* --- Delete button in chat list (Added Here) --- */
+.delete-list-item-btn {
+    position: absolute;
+    left: 10px; /* Position on the left */
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--danger-color);
+    background: none;
+    border: none;
+    font-size: 1.1em;
+    cursor: pointer;
+    padding: 8px; /* Slightly larger click area */
+    opacity: 0.6;
+    transition: opacity 0.2s, color 0.2s;
+    line-height: 1; /* Ensure icon aligns well */
+}
+.delete-list-item-btn:hover {
+    opacity: 1;
+    color: darken(var(--danger-color), 15%);
+}
+.delete-list-item-btn:disabled i {
+    animation: spin 1s linear infinite; /* Add spin animation when disabled */
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+/* --- End Delete button styles --- */
+
+
 .no-chats-message {
     text-align: center;
     color: var(--secondary-color);
@@ -355,7 +407,7 @@ select#model-select:focus {
     padding: 12px 18px;
     border-radius: 20px; /* More rounded */
     font-size: 1em; /* Standard font size */
-    line-height: 1.5;
+    line-height: 1.5; /* تباعد أسطر جيد */
     word-wrap: break-word;
     position: relative;
     box-shadow: 0 2px 5px rgba(0,0,0,0.07);
@@ -367,7 +419,7 @@ select#model-select:focus {
     border-bottom-left-radius: 6px;
 }
 .message.bot-message .message-content {
-    background-color: #e9ecef;
+    background-color: #e9ecef; /* رمادي فاتح للبوت */
     color: var(--dark-color);
     border-bottom-right-radius: 6px;
     position: relative; /* Needed for speak button positioning */
@@ -415,7 +467,7 @@ select#model-select:focus {
     border-radius: 50%;
     width: 24px;
     height: 24px;
-    font-size: 11px;
+    font-size: 11px; /* تصغير الأيقونة */
     line-height: 24px;
     text-align: center;
     opacity: 0;
@@ -550,6 +602,7 @@ select#model-select:focus {
 .chat-footer p {
     margin-bottom: 2px;
 }
+.footer-tagline { /* No specific style needed, inherits from chat-footer */ }
 
 /* --- Responsive Design --- */
 @media (max-width: 900px) {
@@ -570,6 +623,7 @@ select#model-select:focus {
     }
     .chat-page-header .header-content .chat-title-header { max-width: 150px; } /* Shorter title on mobile */
     .chat-page-header #delete-chat-btn { font-size: 0.8em; padding: 5px 8px; }
+    .chat-page-header #delete-chat-btn .delete-text { display: none; } /* Hide text on mobile */
 
 
     .chat-box, .main-content { padding: 15px; }
@@ -584,9 +638,10 @@ select#model-select:focus {
     .input-area textarea#user-input { height: 42px; padding: 9px 15px; font-size: 1em; }
     .input-area .action-button { width: 42px; height: 42px; font-size: 1.2em; }
 
-    .chat-item { padding: 12px; }
+    .chat-item { padding: 12px; padding-left: 45px; } /* Adjust padding for delete btn */
     .chat-title { font-size: 0.95em; }
     .chat-date { font-size: 0.75em; }
+    .delete-list-item-btn { font-size: 1em; left: 8px; }
 
     .new-chat-button, .download-app-button { width: 100%; padding: 12px; font-size: 1em; }
     .chat-footer { padding: 12px 15px; font-size: 0.8em; }
