@@ -1,36 +1,47 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
->
 <head>
-  <meta charset="UTF-8">
-  <title>Yasmin GPT Chat v1 - قائمة المحادثات</title>
-  <link rel="stylesheet" href="/static/css/style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DzTeck.ai - منصة المحادثة الذكية</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
 </head>
 <body>
-  <aside class="sidebar">
-    <div class="sidebar-header">
-      <h2><i class="fas fa-comments"></i> محادثاتي</h2>
-      <form action="/create_chat" method="post">
-        <select name="model" required>
+  <div class="chat-container">
+    <header class="chat-header index-header">
+      <div class="header-left">
+        <h1 class="rahmani-credit">Created by <span>Rahmani</span></h1>
+      </div>
+      <div class="header-right">
+        <img src="static/img/logo.svg" class="logo-img" alt="DzTeck Logo" />
+        <span class="brand-name">DzTeck.ai</span>
+      </div>
+    </header>
+
+    <main class="main-content">
+      <h2><i class="fas fa-comments"></i> محادثاتك</h2>
+      <div class="chat-list" id="chat-list">
+        <!-- يتم عرض المحادثات من الخادم -->
+      </div>
+
+      <form action="/create_chat" method="post" class="new-chat-form">
+        <label for="model-select">اختر نموذج الذكاء:</label>
+        <select id="model-select" name="model" required>
           <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B</option>
           <option value="google/gemma-7b-it">Gemma 7B</option>
         </select>
-        <button type="submit"><i class="fas fa-plus"></i></button>
+        <button type="submit" class="new-chat-button">
+          <i class="fas fa-plus-circle"></i> بدء محادثة جديدة
+        </button>
       </form>
-    </div>
+    </main>
 
-    <ul class="chat-dropdown-list">
-      {% for chat in chats %}
-      <li class="chat-dropdown-item" data-chat-id="{{ chat.id }}">
-        <a href="/chat/{{ chat.id }}">{{ chat.title }}</a>
-        <div class="chat-actions">
-          <button class="rename-chat-btn" title="إعادة التسمية"><i class="fas fa-pen"></i></button>
-          <button class="delete-chat-btn" title="حذف"><i class="fas fa-trash"></i></button>
-        </div>
-      </li>
-      {% endfor %}
-    </ul>
-  </aside>
+    <footer class="chat-footer">
+      <p>© 2025 DzTeck.ai - جميع الحقوق محفوظة</p>
+      <p class="footer-tagline">الذكاء الاصطناعي يتحدث العربية.</p>
+    </footer>
+  </div>
+  <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
