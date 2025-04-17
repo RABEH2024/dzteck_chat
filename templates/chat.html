@@ -1,112 +1,115 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat DZ - المحادثة</title> <!-- العنوان سيتم تحديثه بـ JS -->
-    <meta name="description" content="محادثة ذكية مع الذكاء الاصطناعي على Chat DZ">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- <link rel="icon" href="img/favicon.ico"> -->
-</head>
-<body class="chat-page">
+{% extends 'base.html' %}
 
-    <div class="app-container">
-        <!-- القائمة الجانبية -->
-        <div class="sidebar">
-            <div class="sidebar-header">
-                 <a href="index.html" class="back-to-index-button" title="العودة للقائمة الرئيسية">
-                     <i class="fas fa-arrow-right"></i> الرئيسية
-                 </a>
-                 <button id="new-chat-button-sidebar" class="sidebar-button" title="بدء محادثة جديدة">
-                     <i class="fas fa-plus"></i>
-                 </button>
+{% block title %}{{ current_chat.title }} - ياسمين GPT{% endblock %}
+
+{% block head %}
+<!-- تمرير بيانات المحادثة إلى JavaScript -->
+<meta name="chat-id" content="{{ current_chat.id }}">
+<meta name="chat-model" content="{{ current_chat.model_used }}">
+{% endblock %}
+
+{% block content %}
+<div class="flex-1 flex flex-col h-full overflow-hidden bg-light-background dark:bg-dark-background">
+    <!-- منطقة عرض الرسائل -->
+    <div id="chat-area" class="flex-1 overflow-y-auto p-4 md:p-6 space-y-4">
+        {% for message in messages %}
+            <div class="chat-message flex {% if message.role == 'user' %} justify-end {% else %} justify-start {% endif %}" data-message-id="{{ message.id }}">
+                <div class="message-bubble {% if message.role == 'user' %} user {% elif message.role == 'error' %} error {% else %} ai {% endif %}">
+                    <!-- أيقونة المرسل (اختياري) -->
+                    {% if message.role != 'user' %}
+                    <div class="absolute top-2 -right-10 {% if message.role == 'ai' %} bg-purple-600/30 {% else %} bg-red-600/30 {% endif %} p-1.5 rounded-full shadow-sm hidden sm:block">
+                         {% if message.role == 'ai' %} <i class="fas fa-robot text-purple-300"></i> {% else %} <i class="fas fa-exclamation-triangle text-yellow-300"></i> {% endif %}
+                    </div>
+                    {% endif %}
+
+                    <p class="whitespace-pre-wrap leading-relaxed">{{ message.content }}</p>
+
+                    {% if message.role == 'ai' or message.role == 'error' %}
+                    <div class="message-actions mt-2 pt-1.5 border-t border-white/10 flex items-center justify-end gap-x-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity duration-200" dir="ltr">
+                        {% if message.role == 'ai' %}
+                        <button class="regenerate-btn p-1.5 rounded-full hover:bg-white/20 text-gray-400 hover:text-white transition-colors" title="إعادة توليد الرد">
+                            <i class="fas fa-sync-alt fa-xs"></i>
+                        </button>
+                        <button class="speak-btn p-1.5 rounded-full hover:bg-white/20 text-gray-400 hover:text-white transition-colors" title="نطق الرد">
+                            <i class="fas fa-volume-up fa-xs"></i>
+                        </button>
+                        {% endif %}
+                        <button class="copy-btn p-1.5 rounded-full hover:bg-white/20 text-gray-400 hover:text-white transition-colors" title="نسخ النص">
+                            <i class="fas fa-copy fa-xs copy-icon"></i>
+                            <i class="fas fa-check fa-xs text-green-400 hidden check-icon"></i>
+                        </button>
+                    </div>
+                    {% endif %}
+                </div>
+                 {% if message.role == 'user' %}
+                    <div class="absolute top-2 -left-10 bg-blue-700/50 p-1.5 rounded-full shadow-sm hidden sm:block">
+                         <i class="fas fa-user text-blue-200"></i>
+                    </div>
+                 {% endif %}
             </div>
-            <h2 class="sidebar-title"><i class="fas fa-history"></i> سجل المحادثات</h2>
-            <ul id="conversation-list-chat" class="conversation-list-chat"></ul>
-            <div class="sidebar-footer">
-                 <button id="dark-mode-toggle" title="الوضع الليلي/النهاري">
-                     <i class="fas fa-moon"></i>
+        {% endfor %}
+        <!-- مؤشر الكتابة -->
+        <div id="typing-indicator" class="hidden justify-start items-center p-2 ml-auto max-w-[90%] sm:max-w-[85%] md:max-w-[80%]" dir="rtl">
+             <div class="flex items-center gap-3 p-3.5 rounded-xl shadow-md bg-ai-bg">
+                <div class="p-2 rounded-full bg-purple-600/30 flex-shrink-0 shadow-md">
+                    <i class="fas fa-robot w-5 h-5 text-purple-300"></i>
+                </div>
+                <div class="flex items-center gap-1">
+                    <span class="typing-dot"></span><span class="typing-dot"></span><span class="typing-dot"></span>
+                </div>
+             </div>
+        </div>
+        <div id="chat-end" class="h-1"></div>
+    </div>
+
+    <!-- منطقة الإدخال -->
+    <div class="p-3 md:p-4 bg-light-card dark:bg-dark-card border-t border-light-border dark:border-dark-border shadow-inner z-10">
+        <!-- شريط البحث -->
+        <div id="search-bar" class="mb-2 hidden relative">
+            <input type="text" id="search-input" placeholder="ابحث في المحادثة..." class="w-full p-2 pl-8 text-sm rounded-md bg-light-input dark:bg-dark-input border border-light-border dark:border-dark-border focus:ring-brand-blue focus:border-brand-blue text-light-foreground dark:text-dark-foreground">
+            <i class="fas fa-search absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+        </div>
+        <!-- أزرار التحكم العلوية -->
+        <div class="flex flex-wrap items-center justify-between mb-2 text-xs text-light-muted-foreground dark:text-dark-muted-foreground px-1 gap-y-2 gap-x-4">
+            <div class="flex items-center gap-x-4 gap-y-2 flex-wrap">
+                 <button id="search-toggle-btn" title="بحث في المحادثة" class="flex items-center gap-1 hover:text-brand-blue transition-colors">
+                     <i class="fas fa-search fa-fw"></i> بحث
                  </button>
+                 <div class="flex items-center gap-1">
+                     <label for="temperature-slider" class="whitespace-nowrap">الإبداع:</label>
+                     <input type="range" id="temperature-slider" min="0.1" max="1.5" step="0.1" value="0.7" class="w-20 h-1.5 bg-gray-300 dark:bg-gray-600 rounded-lg appearance-none cursor-pointer accent-brand-purple">
+                     <span id="temperature-value" class="w-8 text-center font-mono text-xs">0.7</span>
+                 </div>
+                 <div class="flex items-center gap-1">
+                     <label for="max-tokens-input" class="whitespace-nowrap">طول الرد:</label>
+                     <input type="number" id="max-tokens-input" min="50" max="2000" step="50" value="500" class="w-16 p-1 text-center text-xs rounded bg-light-input dark:bg-dark-input border border-light-border dark:border-dark-border text-light-foreground dark:text-dark-foreground">
+                 </div>
+            </div>
+            <div class="flex items-center gap-2 text-red-500">
+                <span id="stt-status" class="hidden"><i class="fas fa-microphone-slash mr-1"></i> STT غير مدعوم</span>
+                <span id="tts-status" class="hidden"><i class="fas fa-volume-mute mr-1"></i> TTS غير مدعوم</span>
             </div>
         </div>
+        <!-- حقل الإدخال والأزرار الرئيسية -->
+        <div class="flex items-center gap-2 md:gap-3">
+            <button id="mic-button" title="تحدث" aria-label="بدء التحدث"
+                    class="relative p-3 rounded-lg text-white bg-purple-700 hover:bg-purple-800 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-card hover:scale-105 active:scale-95 overflow-hidden">
+                <i class="fas fa-microphone"></i>
+                <div id="mic-level-indicator" class="absolute bottom-0 left-0 right-0 h-1 bg-red-400 transition-transform duration-100 ease-out origin-bottom scale-y-0"></div>
+            </button>
+            <input type="text" id="message-input" dir="rtl" placeholder="اكتب رسالتك هنا..." aria-label="حقل إدخال الرسالة"
+                   class="flex-1 p-3 rounded-lg bg-light-input dark:bg-dark-input border border-light-border dark:border-dark-border focus:outline-none focus:ring-2 focus:ring-brand-blue focus:border-transparent text-sm sm:text-base placeholder-gray-500 dark:placeholder-gray-400 disabled:opacity-60 disabled:cursor-not-allowed text-light-foreground dark:text-dark-foreground"
+            />
+            <button id="send-button" title="إرسال" aria-label="إرسال الرسالة"
+                    class="p-3 w-[48px] h-[48px] flex items-center justify-center bg-brand-purple rounded-lg text-white transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-card focus:ring-brand-purple hover:bg-purple-700 hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fas fa-paper-plane"></i>
+                <i class="fas fa-spinner fa-spin hidden loading-icon"></i>
+            </button>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
-        <!-- حاوية الشات الرئيسية -->
-        <div class="chat-wrapper">
-            <!-- هيدر المحادثة -->
-            <header class="chat-header chat-page-header">
-                 <div class="logo-area">
-                    <h1 id="chat-title" class="chat-title-header" title="عنوان المحادثة">تحميل...</h1>
-                 </div>
-                <div class="header-content">
-                    <span id="current-model-display" class="model-info-header">النموذج: ...</span>
-                </div>
-                <div class="header-actions">
-                    <button id="export-chat-button" class="header-action-btn" title="تصدير المحادثة كملف نصي">
-                        <i class="fas fa-file-export"></i>
-                        <span class="action-text">تصدير</span>
-                    </button>
-                     <button id="delete-chat-btn" class="header-action-btn danger-btn" title="حذف هذه المحادثة بالكامل">
-                        <i class="fas fa-trash-alt"></i>
-                        <span class="action-text">حذف</span>
-                    </button>
-                </div>
-            </header>
-
-             <!-- منطقة الإعدادات والبحث -->
-             <div class="settings-area">
-                 <div class="setting-item">
-                    <label for="model-select-chat" title="تغيير النموذج لهذه المحادثة"><i class="fas fa-brain"></i></label>
-                    <select id="model-select-chat" title="اختر النموذج">
-                        <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B</option>
-                        <option value="google/gemma-7b-it">Gemma 7B</option>
-                        <option value="anthropic/claude-3-haiku-20240307">Claude 3 Haiku</option>
-                        <option value="openai/gpt-3.5-turbo">GPT-3.5 Turbo</option>
-                        <option value="meta-llama/llama-3-8b-instruct">Llama 3 8B</option>
-                        <option value="nousresearch/nous-hermes-2-mistral-7b-dpo">Nous Hermes 2</option>
-                    </select>
-                 </div>
-                 <div class="setting-item">
-                     <label for="temperature-input" title="درجة الحرارة (الإبداع)"><i class="fas fa-thermometer-half"></i></label>
-                     <input type="range" id="temperature-input" min="0" max="2" step="0.1" value="0.7" title="0.7">
-                     <span id="temperature-value">0.7</span>
-                 </div>
-                 <div class="setting-item">
-                     <label for="max-tokens-input" title="أقصى طول للرد (توكنز)"><i class="fas fa-ruler-combined"></i></label>
-                     <input type="number" id="max-tokens-input" min="50" max="4096" value="512" title="512">
-                 </div>
-                  <div class="setting-item search-setting">
-                      <label for="search-input" title="بحث داخل الرسائل"><i class="fas fa-search"></i></label>
-                      <input type="search" id="search-input" placeholder="بحث في المحادثة...">
-                  </div>
-             </div>
-
-            <!-- صندوق عرض الرسائل -->
-            <div class="chat-box" id="chat-box">
-                <!-- الرسائل ستعرض هنا بواسطة chat.js -->
-            </div>
-
-            <!-- منطقة الإدخال -->
-            <div class="input-section">
-                <div class="input-area">
-                    <textarea id="user-input" placeholder="اكتب رسالتك هنا..." rows="1"></textarea>
-                    <button id="send-button" class="action-button send-btn" title="إرسال">
-                        <i class="fas fa-paper-plane"></i>
-                    </button>
-                </div>
-            </div>
-
-             <!-- الفوتر -->
-             <footer class="chat-footer">
-                 <p>© 2024 Chat DZ - Developed by Rahmani</p>
-            </footer>
-
-            <!-- Hidden Fields (No longer needed for API Key) -->
-            <input type="hidden" id="chat-id" value=""> <!-- سيتم ملء القيمة بواسطة JS -->
-        </div> <!-- نهاية chat-wrapper -->
-    </div> <!-- نهاية app-container -->
-
-    <script src="chat.js"></script>
-</body>
-</html>
+{% block scripts %}
+<!-- لا حاجة لسكربت إضافي هنا، chat.js يتم تحميله من base.html -->
+{% endblock %}
