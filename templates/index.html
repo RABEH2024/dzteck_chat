@@ -1,29 +1,36 @@
-{% extends 'base.html' %}
-
-{% block title %}محادثاتي - ياسمين GPT{% endblock %}
-
-{% block content %}
-<div class="flex-1 flex items-center justify-center bg-light-background dark:bg-dark-background p-6">
-    <div class="text-center max-w-lg">
-        <!-- يمكنك وضع شعار هنا -->
-        <img src="https://image.lexica.art/full_webp/04115a06-6211-4621-a26c-91716a5a37e1" alt="Yasmin AI Assistant" class="w-40 h-40 md:w-48 md:h-48 mx-auto mb-6 rounded-full shadow-lg object-cover border-4 border-brand-purple/30">
-        <h1 class="text-3xl md:text-4xl font-bold mb-3 text-brand-purple dark:text-brand-purple-light">ياسمين GPT</h1>
-        <p class="text-lg text-light-muted-foreground dark:text-dark-muted-foreground mb-6">مساعدك الذكي لاستكشاف الأفكار والإجابة على استفساراتك باللغة العربية.</p>
-        <p class="text-sm text-light-muted-foreground dark:text-dark-muted-foreground">اختر محادثة من القائمة الجانبية أو ابدأ واحدة جديدة لاستكشاف إمكانيات الذكاء الاصطناعي.</p>
-         <!-- زر لبدء محادثة جديدة مباشرة من هنا (اختياري) -->
-         <form action="{{ url_for('create_chat') }}" method="post" class="mt-8">
-             <input type="hidden" name="model" value="mistralai/Mistral-7B-Instruct-v0.2"> <!-- نموذج افتراضي -->
-             <button type="submit" class="bg-brand-purple hover:bg-brand-purple-dark text-white font-medium py-2 px-6 rounded-lg transition duration-200 flex items-center justify-center gap-2 mx-auto">
-                 <i class="fas fa-plus"></i> ابدأ محادثة جديدة
-             </button>
-         </form>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Yasmin GPT Chat v1 - قائمة المحادثات</title>
+  <link rel="stylesheet" href="/static/css/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h2><i class="fas fa-comments"></i> محادثاتي</h2>
+      <form action="/create_chat" method="post">
+        <select name="model" required>
+          <option value="mistralai/mistral-7b-instruct-v0.2">Mistral 7B</option>
+          <option value="google/gemma-7b-it">Gemma 7B</option>
+        </select>
+        <button type="submit"><i class="fas fa-plus"></i></button>
+      </form>
     </div>
-</div>
-{% endblock %}
 
-{% block scripts %}
-<script>
-    // أي سكربتات خاصة بصفحة index فقط (حالياً لا يوجد)
-    // وظائف الشريط الجانبي موجودة في chat.js الذي يتم تحميله في base.html
-</script>
-{% endblock %}
+    <ul class="chat-dropdown-list">
+      {% for chat in chats %}
+      <li class="chat-dropdown-item" data-chat-id="{{ chat.id }}">
+        <a href="/chat/{{ chat.id }}">{{ chat.title }}</a>
+        <div class="chat-actions">
+          <button class="rename-chat-btn" title="إعادة التسمية"><i class="fas fa-pen"></i></button>
+          <button class="delete-chat-btn" title="حذف"><i class="fas fa-trash"></i></button>
+        </div>
+      </li>
+      {% endfor %}
+    </ul>
+  </aside>
+</body>
+</html>
